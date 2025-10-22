@@ -1,0 +1,25 @@
+# Build artifacts
+build/
+*.obj
+*.o
+*.exe
+*.dll
+*.lib
+*.pdb
+
+# Qt Creator
+*.pro.user
+*.qbs.user
+*.autosave
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+CMakeLists.txt.user
+cmake_install.cmake
+Makefile
+
+# Misc
+*.log
+*.tmp
+*.bak

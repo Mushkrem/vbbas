@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>img/f9c90a63363570d7e442e0926babc8b9.png</file>
+        <file>img/dockleft.svg</file>
+        <file>img/dockright.svg</file>
+    </qresource>
+</RCC>
