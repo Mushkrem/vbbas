@@ -5,4 +5,14 @@
         <file>img/dockright.svg</file>
         <file>qss/menubar.css</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>light/index.theme</file>
+        <file>light/actions/24/left_pane.svg</file>
+        <file>light/actions/24/right_pane.png</file>
+        <file>dark/index.theme</file>
+        <file>dark/actions/24/left_pane.svg</file>
+        <file>dark/actions/24/right_pane.svg</file>
+        <file>dark/actions/64/left_pane.svg</file>
+        <file>dark/actions/64/right_pane.svg</file>
+    </qresource>
 </RCC>

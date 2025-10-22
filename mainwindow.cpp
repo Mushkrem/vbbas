@@ -1,7 +1,11 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "stylingutils.h"
 
 #include <QGraphicsDropShadowEffect>
+#include <QStyleHints>
+#include <QEvent>
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,8 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QList<QAction *> actions = ui->menubar->actions();
-    for(int i = 0; i < actions.size(); i++) {
-        QAction *action = actions.at(i);
+    for (QAction *action : actions) {
         QMenu *menu = action->menu();
         QGraphicsDropShadowEffect* dropShadowEffect = new QGraphicsDropShadowEffect(menu);
         dropShadowEffect->setColor(QColor(0, 0, 0, 150));
@@ -19,7 +22,32 @@ MainWindow::MainWindow(QWidget *parent)
         dropShadowEffect->setOffset(5.0, 5.0);
 
         menu->setGraphicsEffect(dropShadowEffect);
+
+        if(action->text() == QString("View")) {
+            QList<QAction *> viewActions = menu->actions();
+            for(QAction *subAction : viewActions) {
+                if(subAction->objectName() == "actionShowLeftSidebar") {
+                    subAction->setIcon(QIcon::fromTheme("left_pane"));
+                }
+                if(subAction->objectName() == "actionShowRightSidebar") {
+                    subAction->setIcon(QIcon::fromTheme("right_pane"));
+                }
+                qDebug() << subAction->icon().name();
+            }
+        }
+
     }
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::ThemeChange) {
+        auto scheme = QGuiApplication::styleHints()->colorScheme();
+        qApp->setPalette(Styling::createCustomPalette(scheme));
+        Styling::applyStyling(this);
+    }
+
+    QMainWindow::changeEvent(event); // Always call base implementation
 }
 
 MainWindow::~MainWindow()

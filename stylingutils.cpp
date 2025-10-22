@@ -1,12 +1,31 @@
 #include "stylingutils.h"
-#include <QDir>
+#include <QStyleFactory>
+#include <QGuiApplication>
+#include <QStyleHints>
 #include <qmenubar.h>
+#include <QStyle>
+#include <QDir>
+
 
 namespace Styling {
 
+QPalette createCustomPalette(Qt::ColorScheme scheme) {
+    QPalette palette = QStyleFactory::create("Fusion")->standardPalette();
+
+    if(scheme == Qt::ColorScheme::Dark) {
+        palette.setColor(QPalette::Midlight, QColor(39, 39, 39));
+    } else {
+        palette.setColor(QPalette::Midlight, QColor(255,255, 255));
+    }
+
+    return palette;
+}
+
 int applyQssIfAvailable(QWidget *widget, QString basePath) {
     QString key = widget->objectName();
-    qDebug() << widget->palette();
+    const auto scheme = QGuiApplication::styleHints()->colorScheme();
+    // qDebug() << style->colorScheme();
+    // qDebug() << widget->dynamicPropertyNames();
     if(key.isEmpty())
         return EXIT_FAILURE;
 

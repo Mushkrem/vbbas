@@ -6,6 +6,7 @@
 #include <QString>
 
 namespace Styling {
+QPalette createCustomPalette(Qt::ColorScheme scheme);
 int applyQssIfAvailaible(QWidget *widget, const QString basePath);
 int applyStyling(MainWindow *window);
 }

@@ -96,7 +96,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -181,8 +181,8 @@ QMenu::Item:selected {
      </property>
      <addaction name="actionClear"/>
     </widget>
-    <addaction name="actionShow"/>
-    <addaction name="actionShow_Right_Sidebar"/>
+    <addaction name="actionShowLeftSidebar"/>
+    <addaction name="actionShowRightSidebar"/>
     <addaction name="separator"/>
     <addaction name="menuOutput"/>
    </widget>
@@ -344,22 +344,22 @@ QMenu::Item:selected {
     <string>Properties</string>
    </property>
   </action>
-  <action name="actionShow">
+  <action name="actionShowLeftSidebar">
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resources/img/dockright.svg</normaloff>:/resources/img/dockright.svg</iconset>
+     <normaloff>:/icons/dark/actions/24/left_pane.svg</normaloff>:/icons/dark/actions/24/left_pane.svg</iconset>
    </property>
    <property name="text">
     <string>Show Left Sidebar</string>
    </property>
   </action>
-  <action name="actionShow_Right_Sidebar">
+  <action name="actionShowRightSidebar">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="resources.qrc">
-     <normaloff>:/resources/img/dockleft.svg</normaloff>:/resources/img/dockleft.svg</iconset>
+     <normaloff>:/icons/dark/actions/24/right_pane.svg</normaloff>:/icons/dark/actions/24/right_pane.svg</iconset>
    </property>
    <property name="text">
     <string>Show Right Sidebar</string>

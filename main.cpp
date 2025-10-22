@@ -3,11 +3,20 @@
 
 #include <QApplication>
 #include <QStyleFactory>
+#include <QStyleHints>
+
+#include <QFile>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
+
+    // QIcon::setThemeSearchPaths(QIcon::themeSearchPaths() << ":/icons");
+    QIcon::setThemeName("dark");
+
+    auto scheme = QGuiApplication::styleHints()->colorScheme();
+    app.setPalette(Styling::createCustomPalette(scheme));
 
     MainWindow window;
     window.show();
@@ -17,5 +26,5 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    return a.exec();
+    return app.exec();
 }
