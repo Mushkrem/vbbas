@@ -1,0 +1,31 @@
+QMenuBar {
+    background-color: transparent;
+    spacing: 2px;
+    padding: 3px;
+}
+
+QMenuBar::item {
+    padding: 2px 8px;
+    background: transparent;
+}
+
+QMenuBar::item:pressed {
+    background: #0e0e0e;
+}
+
+QMenu {
+	background-color: #272727;
+	border: 1px solid #1C1C1C;
+}
+
+QMenu::Item {
+	padding-top: 5px;
+	padding-right: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+	margin-left: 5px;
+}
+
+QMenu::Item:selected {
+	background: #0e0e0e;
+}
