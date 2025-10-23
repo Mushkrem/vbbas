@@ -4,14 +4,31 @@
 
 #include <QGraphicsDropShadowEffect>
 #include <QStyleHints>
+#include <QToolBar>
 #include <QEvent>
 #include <QIcon>
+
+void MainWindow::addToolBars() {
+    fileToolBar = new QToolBar("File Toolbar", this);
+    fileToolBar->setObjectName("filetoolbar");
+    fileToolBar->setIconSize(QSize(16,16));
+    fileToolBar->setMovable(false);
+
+    addToolBar(fileToolBar);
+
+    fileToolBar->addAction(ui->actionNew_File);
+    fileToolBar->addAction(ui->actionOpen_File);
+    fileToolBar->addAction(ui->actionSave_File_name);
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setContextMenuPolicy(Qt::NoContextMenu);
+
+    addToolBars();
 
     QList<QAction *> actions = ui->menubar->actions();
     for (QAction *action : actions) {

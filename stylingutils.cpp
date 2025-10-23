@@ -3,6 +3,7 @@
 #include <QGuiApplication>
 #include <QStyleHints>
 #include <qmenubar.h>
+#include <QToolBar>
 #include <QStyle>
 #include <QDir>
 
@@ -55,6 +56,11 @@ int applyStyling(MainWindow *window) {
 
     err += applyQssIfAvailable(window->menuBar(), qssBasePath);
     err += applyQssIfAvailable(window->centralWidget(), qssBasePath);
+
+    QList<QToolBar *> toolbars = window->findChildren<QToolBar *>();
+    for(QToolBar *toolbar : toolbars) {
+        err += applyQssIfAvailable(toolbar, qssBasePath);
+    }
 
     if(err != 0) return EXIT_FAILURE;
 

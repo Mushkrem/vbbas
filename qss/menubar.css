@@ -5,12 +5,12 @@ QMenuBar {
     padding: 3px;
 }
 
-QMenuBar::item {
+QMenuBar::Item {
     padding: 2px 8px;
     background: transparent;
 }
 
-QMenuBar::item:pressed {
+QMenuBar::Item:pressed {
     /*background: #0e0e0e; */
 	background-color: palette(highlight);
 }

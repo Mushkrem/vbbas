@@ -4,6 +4,7 @@
         <file>img/dockleft.svg</file>
         <file>img/dockright.svg</file>
         <file>qss/menubar.css</file>
+        <file>qss/filetoolbar.css</file>
     </qresource>
     <qresource prefix="/icons">
         <file>light/index.theme</file>

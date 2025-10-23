@@ -17,10 +17,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    QToolBar *fileToolBar;
+
 protected:
     void changeEvent(QEvent *event) override;
 
 private:
     Ui::MainWindow *ui;
+    void addToolBars();
 };
 #endif // MAINWINDOW_H
