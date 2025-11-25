@@ -16,9 +16,29 @@ void MainWindow::addToolBars() {
 
     addToolBar(fileToolBar);
 
-    fileToolBar->addAction(ui->actionNew_File);
-    fileToolBar->addAction(ui->actionOpen_File);
-    fileToolBar->addAction(ui->actionSave_File_name);
+    fileToolBar->addAction(fileActions->newFileAction);
+    fileToolBar->addAction(fileActions->openFileAction);
+    fileToolBar->addAction(fileActions->saveFileAction);
+}
+
+void MainWindow::addActions() {
+    ui->menuFile->addAction(fileActions->newFileAction);
+    ui->menuFile->addAction(fileActions->openFileAction);
+    ui->menuFile->addAction(fileActions->closeFileAction);
+
+    ui->menuFile->addSection(NULL); // separator
+    ui->menuFile->addAction(fileActions->saveFileAction);
+    ui->menuFile->addAction(fileActions->saveAsFileAction);
+    ui->menuFile->addAction(fileActions->saveAllFilesAction);
+
+    ui->menuFile->addSection(NULL); // separator
+    ui->menuFile->addAction(fileActions->printFileAction);
+
+    ui->menuFile->addSection(NULL); // separator
+    ui->menuFile->addAction(fileActions->recentFilesAction);
+
+    ui->menuFile->addSection(NULL); // separator
+    ui->menuFile->addAction(fileActions->exitAction);
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -27,8 +47,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setContextMenuPolicy(Qt::NoContextMenu);
+    fileActions = new FileActions(this);
 
     addToolBars();
+    addActions();
 
     QList<QAction *> actions = ui->menubar->actions();
     for (QAction *action : actions) {
@@ -52,8 +74,16 @@ MainWindow::MainWindow(QWidget *parent)
                 qDebug() << subAction->icon().name();
             }
         }
-
     }
+
+}
+
+void MainWindow::connectActions() {
+    connect(ui->actionOpen_File, &QAction::triggered, this, &MainWindow::onOpenFile);
+}
+
+void MainWindow::onOpenFile() {
+
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -64,7 +94,7 @@ void MainWindow::changeEvent(QEvent *event)
         Styling::applyStyling(this);
     }
 
-    QMainWindow::changeEvent(event); // Always call base implementation
+    QMainWindow::changeEvent(event);
 }
 
 MainWindow::~MainWindow()

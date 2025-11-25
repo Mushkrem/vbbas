@@ -10,6 +10,9 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>vbbas</string>
   </property>
@@ -19,13 +22,28 @@
   <property name="documentMode">
    <bool>false</bool>
   </property>
+  <property name="tabShape">
+   <enum>QTabWidget::TabShape::Rounded</enum>
+  </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>false</bool>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>160</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout"/>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -75,19 +93,8 @@ QMenu::Item:selected {
     <property name="title">
      <string>File</string>
     </property>
-    <widget class="QMenu" name="menuRecent_Files">
-     <property name="title">
-      <string>Recent Files...</string>
-     </property>
-     <addaction name="actionNo_recent_files"/>
-    </widget>
-    <addaction name="actionNew_File"/>
-    <addaction name="actionOpen_File"/>
-    <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_File_name"/>
     <addaction name="separator"/>
-    <addaction name="actionPrint"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">

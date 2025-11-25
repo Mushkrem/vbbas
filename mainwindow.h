@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "actions/fileactions.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -14,6 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    void extracted(QList<QAction *> &actions);
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
@@ -24,6 +26,11 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    FileActions *fileActions;
+    void connectActions();
+
+    void onOpenFile();
     void addToolBars();
+    void addActions();
 };
 #endif // MAINWINDOW_H

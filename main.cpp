@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     QApplication::setStyle(QStyleFactory::create("Fusion"));
 
     // QIcon::setThemeSearchPaths(QIcon::themeSearchPaths() << ":/icons");
-    QIcon::setThemeName("dark");
+    QIcon::setThemeName("Papirus");
 
     auto scheme = QGuiApplication::styleHints()->colorScheme();
     app.setPalette(Styling::createCustomPalette(scheme));
