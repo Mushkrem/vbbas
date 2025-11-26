@@ -16,8 +16,8 @@ QPalette createCustomPalette(Qt::ColorScheme scheme) {
     // Change pallete colors depending on the scheme.
     if(scheme == Qt::ColorScheme::Dark) {
         palette.setColor(QPalette::Midlight, QColor(39, 39, 39));
-    } else {
-        palette.setColor(QPalette::Midlight, QColor(255,255, 255));
+    } else if(scheme == Qt::ColorScheme::Light || scheme == Qt::ColorScheme::Unknown) {
+        palette.setColor(QPalette::Midlight, QColor(255, 255, 255));
     }
 
     return palette;
@@ -25,17 +25,13 @@ QPalette createCustomPalette(Qt::ColorScheme scheme) {
 
 int applyQssIfAvailable(QWidget *widget, QString basePath) {
     QString key = widget->objectName();
-    const auto scheme = QGuiApplication::styleHints()->colorScheme();
-    if(key.isEmpty())
-        return EXIT_FAILURE;
-
     QString qssFilePath = QString("%1/%2.css").arg(basePath, key);
+    int result = EXIT_SUCCESS;
 
     // Look for related .css files to apply the styling.
-    QDir qssDir(basePath);
-    if(qssDir.exists(key + ".css")) {
+    if(!key.isEmpty()) {
         QFile file(qssFilePath);
-        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        if(file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             widget->setStyleSheet(file.readAll());
             file.close();
         }
@@ -44,11 +40,12 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
     // Recursively try applying styling to its children.
     for(QObject *child : widget->children()) {
         if(auto child_widget = qobject_cast<QWidget *>(child)) {
-            applyQssIfAvailable(child_widget, basePath);
+            int child_err = applyQssIfAvailable(child_widget, basePath);
+            result = child_err;
         }
     }
 
-    return EXIT_SUCCESS;
+    return result;
 }
 
 int applyStyling(MainWindow *window) {
