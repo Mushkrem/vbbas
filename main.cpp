@@ -12,19 +12,17 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
 
-    // QIcon::setThemeSearchPaths(QIcon::themeSearchPaths() << ":/icons");
-    QIcon::setThemeName("Papirus");
-
     auto scheme = QGuiApplication::styleHints()->colorScheme();
     app.setPalette(Styling::createCustomPalette(scheme));
 
     MainWindow window;
-    window.show();
 
     if(Styling::applyStyling(&window) != EXIT_SUCCESS) {
         qDebug() << "Couldn't apply styling";
         return EXIT_FAILURE;
     }
+
+    window.show();
 
     return app.exec();
 }
