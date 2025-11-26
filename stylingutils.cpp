@@ -41,7 +41,8 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
     for(QObject *child : widget->children()) {
         if(auto child_widget = qobject_cast<QWidget *>(child)) {
             int child_err = applyQssIfAvailable(child_widget, basePath);
-            result = child_err;
+            if(child_err == EXIT_FAILURE)
+                result = EXIT_FAILURE;
         }
     }
 
