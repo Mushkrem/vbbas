@@ -13,6 +13,7 @@ namespace Styling {
 QPalette createCustomPalette(Qt::ColorScheme scheme) {
     QPalette palette = QStyleFactory::create("Fusion")->standardPalette();
 
+    // Change pallete colors depending on the scheme.
     if(scheme == Qt::ColorScheme::Dark) {
         palette.setColor(QPalette::Midlight, QColor(39, 39, 39));
     } else {
@@ -25,13 +26,12 @@ QPalette createCustomPalette(Qt::ColorScheme scheme) {
 int applyQssIfAvailable(QWidget *widget, QString basePath) {
     QString key = widget->objectName();
     const auto scheme = QGuiApplication::styleHints()->colorScheme();
-    // qDebug() << style->colorScheme();
-    // qDebug() << widget->dynamicPropertyNames();
     if(key.isEmpty())
         return EXIT_FAILURE;
 
     QString qssFilePath = QString("%1/%2.css").arg(basePath, key);
 
+    // Look for related .css files to apply the styling.
     QDir qssDir(basePath);
     if(qssDir.exists(key + ".css")) {
         QFile file(qssFilePath);
@@ -41,6 +41,7 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
         }
     }
 
+    // Recursively try applying styling to its children.
     for(QObject *child : widget->children()) {
         if(auto child_widget = qobject_cast<QWidget *>(child)) {
             applyQssIfAvailable(child_widget, basePath);
@@ -54,12 +55,11 @@ int applyStyling(MainWindow *window) {
     const QString qssBasePath = ":/resources/qss";
     int err = 0;
 
-    err += applyQssIfAvailable(window->menuBar(), qssBasePath);
-    err += applyQssIfAvailable(window->centralWidget(), qssBasePath);
-
-    QList<QToolBar *> toolbars = window->findChildren<QToolBar *>();
-    for(QToolBar *toolbar : toolbars) {
-        err += applyQssIfAvailable(toolbar, qssBasePath);
+    // Loop through window's children and try applying styling.
+    for(QObject * child : window->children()) {
+        if(auto child_widget = qobject_cast<QWidget *>(child)) {
+            err += applyQssIfAvailable(child_widget, qssBasePath);
+        }
     }
 
     if(err != 0) return EXIT_FAILURE;

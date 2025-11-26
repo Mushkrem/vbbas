@@ -46,11 +46,23 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setCentralWidget(ui->centralwidget);
     this->setContextMenuPolicy(Qt::NoContextMenu);
     fileActions = new FileActions(this);
 
     addToolBars();
     addActions();
+
+    // ui->horizontalLayoutWidget
+    QTabWidget *central = new QTabWidget;
+    central->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    QWidget *tab1 = new QWidget;
+    QWidget *tab2 = new QWidget;
+
+    central->addTab(tab1, "Home");
+    central->addTab(tab2, "testfile.vbb");
+
+    ui->horizontalLayout->addWidget(central);
 
     QList<QAction *> actions = ui->menubar->actions();
     for (QAction *action : actions) {
