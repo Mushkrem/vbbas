@@ -2,7 +2,6 @@
 #include "./ui_mainwindow.h"
 #include "stylingutils.h"
 
-#include <QGraphicsDropShadowEffect>
 #include <QStyleHints>
 #include <QToolBar>
 #include <QEvent>
@@ -73,27 +72,9 @@ MainWindow::MainWindow(QWidget *parent)
     QList<QAction *> actions = ui->menubar->actions();
     for (QAction *action : actions) {
         QMenu *menu = action->menu();
-        QGraphicsDropShadowEffect* dropShadowEffect = new QGraphicsDropShadowEffect(menu);
-        dropShadowEffect->setColor(QColor(0, 0, 0, 150));
-        dropShadowEffect->setBlurRadius(8.0);
-        dropShadowEffect->setOffset(5.0, 5.0);
 
-        menu->setGraphicsEffect(dropShadowEffect);
-
-        if(action->text() == QString("View")) {
-            QList<QAction *> viewActions = menu->actions();
-            for(QAction *subAction : viewActions) {
-                if(subAction->objectName() == "actionShowLeftSidebar") {
-                    subAction->setIcon(QIcon::fromTheme("left_pane"));
-                }
-                if(subAction->objectName() == "actionShowRightSidebar") {
-                    subAction->setIcon(QIcon::fromTheme("right_pane"));
-                }
-                qDebug() << subAction->icon().name();
-            }
-        }
+        Styling::applyDropShadowEffect(menu);
     }
-
 }
 
 void MainWindow::connectActions() {

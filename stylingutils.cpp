@@ -1,6 +1,8 @@
 #include "stylingutils.h"
-#include <QStyleFactory>
+
+#include <QGraphicsDropShadowEffect>
 #include <QGuiApplication>
+#include <QStyleFactory>
 #include <QStyleHints>
 #include <qmenubar.h>
 #include <QToolBar>
@@ -71,6 +73,15 @@ int applyStyling(MainWindow *window) {
     if(err != 0) return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
+}
+
+void applyDropShadowEffect(QWidget* widget) {
+    QGraphicsDropShadowEffect* dropShadowEffect = new QGraphicsDropShadowEffect(widget);
+    dropShadowEffect->setColor(QColor(0, 0, 0, 150));
+    dropShadowEffect->setBlurRadius(8.0);
+    dropShadowEffect->setOffset(5.0, 5.0);
+
+    widget->setGraphicsEffect(dropShadowEffect);
 }
 
 }
