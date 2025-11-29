@@ -41,6 +41,9 @@
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <property name="sizeConstraint">
        <enum>QLayout::SizeConstraint::SetNoConstraint</enum>
       </property>
@@ -178,6 +181,18 @@ QMenu::Item:selected {
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="tasksWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>34</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
@@ -190,6 +205,12 @@ QMenu::Item:selected {
    <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
   <widget class="QDockWidget" name="navigatorWidget">
+   <property name="minimumSize">
+    <size>
+     <width>150</width>
+     <height>34</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
    </property>
@@ -208,6 +229,12 @@ QMenu::Item:selected {
    <widget class="QWidget" name="dockWidgetContents_5"/>
   </widget>
   <widget class="QDockWidget" name="variablesWidget">
+   <property name="minimumSize">
+    <size>
+     <width>100</width>
+     <height>34</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::DockWidgetArea::LeftDockWidgetArea|Qt::DockWidgetArea::RightDockWidgetArea</set>
    </property>
@@ -223,6 +250,12 @@ QMenu::Item:selected {
    <widget class="QWidget" name="dockWidgetContents_6"/>
   </widget>
   <widget class="QDockWidget" name="outputWidget">
+   <property name="minimumSize">
+    <size>
+     <width>51</width>
+     <height>60</height>
+    </size>
+   </property>
    <property name="allowedAreas">
     <set>Qt::DockWidgetArea::BottomDockWidgetArea</set>
    </property>

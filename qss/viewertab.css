@@ -1,0 +1,25 @@
+QTabWidget::pane {
+    border-top: 1px solid palette(Mid);
+    background: transparent;
+    top: -1px;
+}
+
+QTabBar::tab {
+    border: 1px solid palette(Mid);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    background: palette(Dark);
+    color: palette(ToolTipText);
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    margin-top: 2px;
+}
+
+QTabBar::tab:selected {
+    border-bottom: 1px solid palette(Window);
+    background: palette(Window);
+    color: palette(Text);
+    margin-top: 0px;
+}

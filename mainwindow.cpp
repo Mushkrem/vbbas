@@ -7,12 +7,12 @@
 #include <QToolBar>
 #include <QEvent>
 #include <QIcon>
-
 void MainWindow::addToolBars() {
     fileToolBar = new QToolBar("File Toolbar", this);
     fileToolBar->setObjectName("filetoolbar");
     fileToolBar->setIconSize(QSize(16,16));
-    fileToolBar->setMovable(false);
+    fileToolBar->setFloatable(false);
+    // fileToolBar->setMovable(false);
 
     addToolBar(fileToolBar);
 
@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setCentralWidget(ui->centralwidget);
+    ui->centralwidget->layout()->setContentsMargins(0, 0, 0, 0);
     this->setContextMenuPolicy(Qt::NoContextMenu);
     fileActions = new FileActions(this);
 
@@ -55,13 +56,18 @@ MainWindow::MainWindow(QWidget *parent)
 
     // ui->horizontalLayoutWidget
     QTabWidget *central = new QTabWidget;
+    central->setObjectName("viewertab");
+
     central->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QWidget *tab1 = new QWidget;
     QWidget *tab2 = new QWidget;
+    central->setTabsClosable(true);
+    central->setMovable(true);
 
     central->addTab(tab1, "Home");
     central->addTab(tab2, "testfile.vbb");
 
+    ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
     ui->horizontalLayout->addWidget(central);
 
     QList<QAction *> actions = ui->menubar->actions();

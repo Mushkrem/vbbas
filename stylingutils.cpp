@@ -7,7 +7,6 @@
 #include <QStyle>
 #include <QDir>
 
-
 namespace Styling {
 
 QPalette createCustomPalette(Qt::ColorScheme scheme) {
@@ -16,8 +15,16 @@ QPalette createCustomPalette(Qt::ColorScheme scheme) {
     // Change pallete colors depending on the scheme.
     if(scheme == Qt::ColorScheme::Dark) {
         palette.setColor(QPalette::Midlight, QColor(39, 39, 39));
+        palette.setColor(QPalette::Mid, QColor(35, 35, 35));
+        palette.setColor(QPalette::Dark, QColor(28, 28, 28));
+        palette.setColor(QPalette::Base, QColor(31, 31, 31));
+        palette.setColor(QPalette::Window, QColor(30, 30, 30));
     } else if(scheme == Qt::ColorScheme::Light || scheme == Qt::ColorScheme::Unknown) {
-        palette.setColor(QPalette::Midlight, QColor(255, 255, 255));
+        palette.setColor(QPalette::Midlight, QColor(240, 240, 240));
+        palette.setColor(QPalette::Dark, QColor(228, 228, 228));
+        palette.setColor(QPalette::Mid, QColor(216, 216, 216));
+        palette.setColor(QPalette::Base, QColor(245, 245, 245));
+        palette.setColor(QPalette::Window, QColor(239, 239, 239));
     }
 
     return palette;
@@ -31,6 +38,7 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
     // Look for related .css files to apply the styling.
     if(!key.isEmpty()) {
         QFile file(qssFilePath);
+        qDebug() << "Looking for: " << key;
         if(file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             widget->setStyleSheet(file.readAll());
             file.close();
