@@ -16,6 +16,11 @@
   <property name="windowTitle">
    <string>vbbas</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QDockWidget {
+		border: 1px solid red;
+}</string>
+  </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
   </property>
@@ -60,7 +65,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -190,7 +195,7 @@ QMenu::Item:selected {
    <property name="minimumSize">
     <size>
      <width>150</width>
-     <height>34</height>
+     <height>40</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -208,7 +213,7 @@ QMenu::Item:selected {
    <property name="minimumSize">
     <size>
      <width>150</width>
-     <height>34</height>
+     <height>40</height>
     </size>
    </property>
    <property name="features">
@@ -232,7 +237,7 @@ QMenu::Item:selected {
    <property name="minimumSize">
     <size>
      <width>100</width>
-     <height>34</height>
+     <height>40</height>
     </size>
    </property>
    <property name="allowedAreas">
@@ -252,7 +257,7 @@ QMenu::Item:selected {
   <widget class="QDockWidget" name="outputWidget">
    <property name="minimumSize">
     <size>
-     <width>51</width>
+     <width>82</width>
      <height>60</height>
     </size>
    </property>

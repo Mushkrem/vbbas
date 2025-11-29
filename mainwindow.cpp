@@ -11,13 +11,12 @@ void MainWindow::addToolBars() {
     fileToolBar->setObjectName("filetoolbar");
     fileToolBar->setIconSize(QSize(16,16));
     fileToolBar->setFloatable(false);
-    // fileToolBar->setMovable(false);
-
-    addToolBar(fileToolBar);
 
     fileToolBar->addAction(fileActions->newFileAction);
     fileToolBar->addAction(fileActions->openFileAction);
     fileToolBar->addAction(fileActions->saveFileAction);
+
+    addToolBar(Qt::TopToolBarArea, fileToolBar);
 }
 
 void MainWindow::addActions() {
@@ -53,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent)
     addToolBars();
     addActions();
 
-    // ui->horizontalLayoutWidget
     QTabWidget *central = new QTabWidget;
     central->setObjectName("viewertab");
 

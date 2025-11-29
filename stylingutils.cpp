@@ -61,18 +61,7 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
 
 int applyStyling(MainWindow *window) {
     const QString qssBasePath = ":/resources/qss";
-    int err = 0;
-
-    // Loop through window's children and try applying styling.
-    for(QObject * child : window->children()) {
-        if(auto child_widget = qobject_cast<QWidget *>(child)) {
-            err += applyQssIfAvailable(child_widget, qssBasePath);
-        }
-    }
-
-    if(err != 0) return EXIT_FAILURE;
-
-    return EXIT_SUCCESS;
+    return applyQssIfAvailable(window, qssBasePath);;
 }
 
 void applyDropShadowEffect(QWidget* widget) {
