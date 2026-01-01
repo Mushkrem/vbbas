@@ -2,11 +2,14 @@
 #include "./ui_mainwindow.h"
 #include "stylingutils.h"
 
+#include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QStyleHints>
 #include <QToolBar>
 #include <QTabBar>
 #include <QEvent>
 #include <QIcon>
+
 void MainWindow::addToolBars() {
     fileToolBar = new QToolBar("File Toolbar", this);
     fileToolBar->setObjectName("filetoolbar");
@@ -53,19 +56,16 @@ MainWindow::MainWindow(QWidget *parent)
     addToolBars();
     addActions();
 
-    QTabWidget *central = new QTabWidget;
+    central = new QTabWidget(this);
     central->setObjectName("viewertab");
-
     central->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     central->tabBar()->setExpanding(false);
     central->tabBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    QWidget *tab1 = new QWidget;
-    QWidget *tab2 = new QWidget;
+
     central->setTabsClosable(true);
     central->setMovable(true);
 
-    central->addTab(tab1, "Home");
-    central->addTab(tab2, "testfile.vbb");
+    documentsManager = new DocumentsManager(central, this);
 
     ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
     ui->horizontalLayout->addWidget(central);
@@ -76,6 +76,33 @@ MainWindow::MainWindow(QWidget *parent)
 
         Styling::applyDropShadowEffect(menu);
     }
+
+    connect(fileActions, &FileActions::newFileRequested,
+            documentsManager, &DocumentsManager::createNewDocument);
+
+    connect(fileActions, &FileActions::openFileRequested,
+            documentsManager, &DocumentsManager::openDocument);
+
+    connect(fileActions, &FileActions::closeFileRequested,
+            documentsManager,
+            static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
+
+    connect(central, &QTabWidget::tabCloseRequested,
+            documentsManager,
+            static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
+}
+
+void MainWindow::createNewTab() {
+    QWidget *tab = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout(tab);
+
+    auto *scene = new QGraphicsScene;
+    auto *view = new QGraphicsView(scene);
+
+    layout->addWidget(view);
+
+    int index = central->addTab(tab, "Untitled");
+    central->setCurrentIndex(index);
 }
 
 void MainWindow::changeEvent(QEvent *event)

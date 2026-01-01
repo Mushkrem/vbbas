@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     find_package(Qt6 REQUIRED COMPONENTS Core)
 find_package(Qt6 REQUIRED COMPONENTS Core)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
     qt_add_executable(vbbas
         MANUAL_FINALIZATION
@@ -32,6 +33,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
         stylingutils.cpp
         Actions/fileactions.cpp
         actions/fileactions.h actions/fileactions.cpp
+        documents/documenttab.h documents/documenttab.cpp
+        documents/documentsmanager.h documents/documentsmanager.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET vbbas APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -52,6 +55,7 @@ else()
 endif()
 
 target_link_libraries(vbbas PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(vbbas PRIVATE Qt6::Core)
 target_link_libraries(vbbas PRIVATE Qt6::Core)
 target_link_libraries(vbbas PRIVATE Qt6::Core)
 

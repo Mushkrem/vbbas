@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "actions/fileactions.h"
+#include "documents/documentsmanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -15,8 +16,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    explicit MainWindow(QWidget *parent = nullptr);
     void extracted(QList<QAction *> &actions);
-    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
     QToolBar *fileToolBar;
@@ -27,7 +28,11 @@ protected:
 private:
     Ui::MainWindow *ui;
     FileActions *fileActions;
+    QTabWidget *central;
+    DocumentsManager *documentsManager;
     void connectActions();
+
+    void createNewTab();
 
     void onOpenFile();
     void addToolBars();

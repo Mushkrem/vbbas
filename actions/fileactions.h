@@ -24,9 +24,9 @@ public:
 
     QAction* exitAction;
 
-private slots:
+signals:
     void newFileRequested();
-    void openFileRequested();
+    void openFileRequested(const QString &filePath);
     void closeFileRequested();
 
     void saveFileRequested();
@@ -38,6 +38,21 @@ private slots:
     void recentFilesRequested();
 
     void exitRequested();
+
+private slots:
+    void onNewFileTriggered();
+    void onOpenFileTriggered();
+    void onCloseFileTriggered();
+
+    void onSaveFileTriggered();
+    void onSaveAsFileTriggered();
+    void onSaveAllFilesTriggered();
+
+    void onPrintFileTriggered();
+
+    void onRecentFilesTriggered();
+
+    void onExitTriggered();
 
 private:
     QWidget *m_parentWindow;
