@@ -4,6 +4,7 @@
 
 #include <QStyleHints>
 #include <QToolBar>
+#include <QTabBar>
 #include <QEvent>
 #include <QIcon>
 void MainWindow::addToolBars() {
@@ -56,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
     central->setObjectName("viewertab");
 
     central->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    central->tabBar()->setExpanding(false);
+    central->tabBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     QWidget *tab1 = new QWidget;
     QWidget *tab2 = new QWidget;
     central->setTabsClosable(true);
@@ -73,14 +76,6 @@ MainWindow::MainWindow(QWidget *parent)
 
         Styling::applyDropShadowEffect(menu);
     }
-}
-
-void MainWindow::connectActions() {
-    connect(ui->actionOpen_File, &QAction::triggered, this, &MainWindow::onOpenFile);
-}
-
-void MainWindow::onOpenFile() {
-
 }
 
 void MainWindow::changeEvent(QEvent *event)

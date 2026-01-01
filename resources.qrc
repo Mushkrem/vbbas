@@ -6,6 +6,7 @@
         <file>qss/menubar.css</file>
         <file>qss/filetoolbar.css</file>
         <file>qss/viewertab.css</file>
+        <file>qss/MainWindow.css</file>
     </qresource>
     <qresource prefix="/icons">
         <file>light/index.theme</file>

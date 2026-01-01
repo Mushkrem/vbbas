@@ -14,12 +14,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>vbbas</string>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QDockWidget {
-		border: 1px solid red;
-}</string>
+   <string>Vibas</string>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
@@ -65,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
