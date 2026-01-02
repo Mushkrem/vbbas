@@ -32,8 +32,6 @@ private:
     DocumentsManager *documentsManager;
     void connectActions();
 
-    void createNewTab();
-
     void onOpenFile();
     void addToolBars();
     void addActions();

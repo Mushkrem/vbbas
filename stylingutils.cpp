@@ -23,8 +23,9 @@ QPalette createCustomPalette(Qt::ColorScheme scheme) {
         palette.setColor(QPalette::Window, QColor(30, 30, 30));
     } else if(scheme == Qt::ColorScheme::Light || scheme == Qt::ColorScheme::Unknown) {
         palette.setColor(QPalette::Midlight, QColor(240, 240, 240));
-        palette.setColor(QPalette::Dark, QColor(228, 228, 228));
         palette.setColor(QPalette::Mid, QColor(216, 216, 216));
+        palette.setColor(QPalette::Dark, QColor(209, 209, 209));
+        palette.setColor(QPalette::Accent, QColor(196, 196, 196));
         palette.setColor(QPalette::Base, QColor(245, 245, 245));
         palette.setColor(QPalette::Window, QColor(239, 239, 239));
     }

@@ -1,0 +1,20 @@
+QDockWidget::title {
+    background: palette(Mid);
+    padding: 4px;
+    color: palette(WindowText);
+    border-bottom: 1px solid palette(Dark);
+}
+
+QDockWidget QWidget {
+    background-color: palette(Midlight);
+    border: 1px solid palette(Dark);
+    border-top: none;
+}
+
+QMainWindow::separator:hover {
+    background: palette(Accent);
+}
+
+QWidget#centralwidget {
+    
+}

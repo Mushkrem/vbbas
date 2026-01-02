@@ -6,6 +6,7 @@ QTabWidget::pane {
     border-top: 1px solid palette(Mid);
     background: transparent;
     top: -1px;
+    padding: 0;
 }
 
 QTabBar::tab {
@@ -27,4 +28,22 @@ QTabBar::tab:selected {
     background: palette(Window);
     color: palette(Text);
     margin-top: 0px;
+}
+
+QTabBar[single="true"]::tab {
+    border-bottom: 1px solid palette(Window);
+    background: palette(Window);
+    color: palette(Text);
+    margin-top: 0px;
+    padding-bottom: 5px;
+}
+
+QToolBar#toolstoolbar {
+    border: none;
+    background: palette(Window);
+    padding: 3px;
+}
+
+QToolBar#toolstoolbar::handle {
+    image: url(:/icons/toolbar-handle.png);
 }

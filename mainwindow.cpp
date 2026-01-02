@@ -9,6 +9,7 @@
 #include <QTabBar>
 #include <QEvent>
 #include <QIcon>
+#include <qstyle.h>
 
 void MainWindow::addToolBars() {
     fileToolBar = new QToolBar("File Toolbar", this);
@@ -58,17 +59,38 @@ MainWindow::MainWindow(QWidget *parent)
 
     central = new QTabWidget(this);
     central->setObjectName("viewertab");
-    central->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    central->tabBar()->setExpanding(false);
-    central->tabBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-
+    central->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     central->setTabsClosable(true);
     central->setMovable(true);
+
+    QTabBar *bar = central->tabBar();
+    bar->setExpanding(false);
+    bar->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    bar->setUsesScrollButtons(false);
+    bar->setElideMode(Qt::ElideRight);
+
+    auto updateSingleProperty = [this]() {
+        QTabBar *bar = central->tabBar();
+        bool single = (central->count() == 1);
+        bar->setProperty("single", single);
+
+        bar->style()->unpolish(bar);
+        bar->style()->polish(bar);
+        bar->update();
+    };
+
+    connect(central, &QTabWidget::currentChanged,
+            this, [updateSingleProperty](int){ updateSingleProperty(); });
+
+    connect(central, &QTabWidget::tabCloseRequested,
+            this, [updateSingleProperty](int){ updateSingleProperty(); });
+
+    updateSingleProperty();
 
     documentsManager = new DocumentsManager(central, this);
 
     ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    ui->horizontalLayout->addWidget(central);
+    ui->horizontalLayout->addWidget(central, 1);
 
     QList<QAction *> actions = ui->menubar->actions();
     for (QAction *action : actions) {
@@ -77,11 +99,17 @@ MainWindow::MainWindow(QWidget *parent)
         Styling::applyDropShadowEffect(menu);
     }
 
+    connect(fileActions, &FileActions::saveFileRequested,
+            documentsManager,
+            static_cast<void (DocumentsManager::*)()>(&DocumentsManager::saveCurrentDocument));
+
     connect(fileActions, &FileActions::newFileRequested,
-            documentsManager, &DocumentsManager::createNewDocument);
+            documentsManager,
+            &DocumentsManager::createNewDocument);
 
     connect(fileActions, &FileActions::openFileRequested,
-            documentsManager, &DocumentsManager::openDocument);
+            documentsManager,
+            &DocumentsManager::openDocument);
 
     connect(fileActions, &FileActions::closeFileRequested,
             documentsManager,
@@ -90,19 +118,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager,
             static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
-}
-
-void MainWindow::createNewTab() {
-    QWidget *tab = new QWidget;
-    QVBoxLayout *layout = new QVBoxLayout(tab);
-
-    auto *scene = new QGraphicsScene;
-    auto *view = new QGraphicsView(scene);
-
-    layout->addWidget(view);
-
-    int index = central->addTab(tab, "Untitled");
-    central->setCurrentIndex(index);
 }
 
 void MainWindow::changeEvent(QEvent *event)
