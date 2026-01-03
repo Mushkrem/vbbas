@@ -1,0 +1,62 @@
+QWidget {
+    background-color: palette(Midlight);
+    border: 1px solid palette(Dark);
+    border-top: none;
+}
+
+QTableWidget#taskTable {
+    background-color: palette(Base);
+    border: 1px solid palette(Mid);
+    border-radius: 3px;
+    gridline-color: palette(Mid);
+}
+
+QTableWidget#taskTable::item {
+    padding: 4px;
+    border-bottom: 1px solid palette(Mid);
+}
+
+QTableWidget#taskTable::item:selected {
+    background-color: transparent;
+}
+
+QHeaderView::section {
+    background-color: palette(Button);
+    padding: 4px;
+    border: none;
+    border-bottom: 1px solid palette(Mid);
+    border-right: 1px solid palette(Mid);
+    font-weight: bold;
+}
+
+QPushButton {
+    background-color: palette(Button);
+    border: 1px solid palette(Mid);
+    border-radius: 3px;
+    padding: 3px 8px;
+}
+
+QPushButton:hover {
+    background-color: palette(Light);
+}
+
+QPushButton:pressed {
+    background-color: palette(Mid);
+}
+
+QPushButton#compilebutton {
+    background-color: palette(Accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    padding: 6px;
+}
+
+QPushButton#compilebutton:hover {
+    background-color: #5a9ff2;
+}
+
+QPushButton#compilebutton:pressed {
+    background-color: #3a80d2;
+}

@@ -35,7 +35,14 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
         actions/fileactions.h actions/fileactions.cpp
         documents/documenttab.h documents/documenttab.cpp
         documents/documentsmanager.h documents/documentsmanager.cpp
+        docks/docksmanager.h docks/docksmanager.cpp
+        docks/dockbase.h docks/dockbase.cpp
+        docks/tasksdock.h docks/tasksdock.cpp
     )
+
+target_include_directories(vbbas PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/docks
+)
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET vbbas APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

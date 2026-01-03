@@ -16,5 +16,7 @@ QMainWindow::separator:hover {
 }
 
 QWidget#centralwidget {
-    
+    background-image: url(":/img/logo/logo-mono-solid.svg");
+    background-repeat: no-repeat;
+    background-position: center;
 }

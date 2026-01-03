@@ -1,12 +1,10 @@
 <RCC>
     <qresource prefix="/resources">
-        <file>img/f9c90a63363570d7e442e0926babc8b9.png</file>
-        <file>img/dockleft.svg</file>
-        <file>img/dockright.svg</file>
         <file>qss/menubar.css</file>
         <file>qss/filetoolbar.css</file>
         <file>qss/viewertab.css</file>
         <file>qss/MainWindow.css</file>
+        <file>qss/tasksWidget.css</file>
     </qresource>
     <qresource prefix="/icons">
         <file>light/index.theme</file>
@@ -17,5 +15,13 @@
         <file>dark/actions/24/right_pane.svg</file>
         <file>dark/actions/64/left_pane.svg</file>
         <file>dark/actions/64/right_pane.svg</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>logo/logo.svg</file>
+        <file>logo/logo-mono.svg</file>
+        <file>logo/logo-mono-solid.svg</file>
+        <file>logo/logo-mono-solid-blocky.svg</file>
+        <file>logo/logo-solid.svg</file>
+        <file>logo/logo-solid-blocky.svg</file>
     </qresource>
 </RCC>

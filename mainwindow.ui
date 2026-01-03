@@ -6,15 +6,29 @@
    <rect>
     <x>0</x>
     <y>0</y>
+    <width>1024</width>
+    <height>768</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
     <width>800</width>
     <height>600</height>
-   </rect>
+   </size>
   </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
   <property name="windowTitle">
    <string>Vibas</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/img/logo/logo-solid-blocky.svg</normaloff>
+    <activeoff>:/img/logo/logo-mono-solid-blocky.svg</activeoff>
+    <activeon>:/img/logo/logo-solid-blocky.svg</activeon>
+    <selectedoff>:/img/logo/logo-mono-solid-blocky.svg</selectedoff>
+    <selectedon>:/img/logo/logo-solid-blocky.svg</selectedon>:/img/logo/logo-solid-blocky.svg</iconset>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonStyle::ToolButtonIconOnly</enum>
@@ -59,8 +73,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>26</height>
+     <width>1024</width>
+     <height>27</height>
     </rect>
    </property>
    <property name="font">
@@ -180,7 +194,7 @@ QMenu::Item:selected {
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="tasksWidget">
+  <widget class="TasksDock" name="tasksWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -250,11 +264,20 @@ QMenu::Item:selected {
    <widget class="QWidget" name="dockWidgetContents_6"/>
   </widget>
   <widget class="QDockWidget" name="outputWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>82</width>
-     <height>60</height>
+     <height>40</height>
     </size>
+   </property>
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeature::DockWidgetClosable|QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::DockWidgetArea::BottomDockWidgetArea</set>
@@ -268,7 +291,14 @@ QMenu::Item:selected {
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_7"/>
+   <widget class="QWidget" name="dockWidgetContents_7">
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+   </widget>
   </widget>
   <action name="actionNew_File">
    <property name="icon">
@@ -490,6 +520,14 @@ QMenu::Item:selected {
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TasksDock</class>
+   <extends>QDockWidget</extends>
+   <header>tasksdock.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>

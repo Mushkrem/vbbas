@@ -1,15 +1,16 @@
 #include "mainwindow.h"
-#include "./ui_mainwindow.h"
 #include "stylingutils.h"
+#include "./ui_mainwindow.h"
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QStyleHints>
+#include <QDockWidget>
 #include <QToolBar>
 #include <QTabBar>
+#include <QStyle>
 #include <QEvent>
 #include <QIcon>
-#include <qstyle.h>
 
 void MainWindow::addToolBars() {
     fileToolBar = new QToolBar("File Toolbar", this);
@@ -49,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    resizeDocks({ui->outputWidget}, {160}, Qt::Vertical);
+    resizeDocks({ui->tasksWidget, ui->navigatorWidget, ui->variablesWidget}, {280, 280, 200}, Qt::Horizontal);
     setCentralWidget(ui->centralwidget);
     ui->centralwidget->layout()->setContentsMargins(0, 0, 0, 0);
     this->setContextMenuPolicy(Qt::NoContextMenu);
@@ -118,6 +121,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager,
             static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
+
+    QList<QDockWidget*> docks = findChildren<QDockWidget*>();
+    docksManager = new DocksManager(docks, this);
 }
 
 void MainWindow::changeEvent(QEvent *event)

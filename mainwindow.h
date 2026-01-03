@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "actions/fileactions.h"
 #include "documents/documentsmanager.h"
+#include "docks/docksmanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,9 +28,12 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    FileActions *fileActions;
     QTabWidget *central;
+
+    FileActions *fileActions;
     DocumentsManager *documentsManager;
+    DocksManager *docksManager;
+
     void connectActions();
 
     void onOpenFile();
