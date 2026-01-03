@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include "actions/fileactions.h"
 #include "documents/documentsmanager.h"
+#include "actions/actionsmanager.h"
 #include "docks/docksmanager.h"
+
+#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,14 +31,11 @@ private:
     Ui::MainWindow *ui;
     QTabWidget *central;
 
-    FileActions *fileActions;
+    ActionsManager *actionsManager;
     DocumentsManager *documentsManager;
     DocksManager *docksManager;
 
     void connectActions();
-
-    void onOpenFile();
-    void addToolBars();
-    void addActions();
+    void setupUI();
 };
 #endif // MAINWINDOW_H

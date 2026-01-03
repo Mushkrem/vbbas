@@ -1,8 +1,10 @@
 #ifndef FILEACTIONS_H
 #define FILEACTIONS_H
 
+#include <QToolBar>
 #include <QObject>
 #include <QAction>
+#include <QMenu>
 
 class FileActions : public QObject
 {
@@ -13,45 +15,36 @@ public:
     QAction* newFileAction;
     QAction* openFileAction;
     QAction* closeFileAction;
-
     QAction* saveFileAction;
     QAction* saveAsFileAction;
     QAction* saveAllFilesAction;
-
     QAction* printFileAction;
-
     QAction* recentFilesAction;
-
     QAction* exitAction;
+
+    void populateMenu(QMenu *menu);
+    QToolBar* createToolBar(QWidget *parent);
 
 signals:
     void newFileRequested();
     void openFileRequested(const QString &filePath);
     void closeFileRequested();
-
     void saveFileRequested();
     void saveAsFileRequested();
     void saveAllFilesRequested();
-
     void printFileRequested();
-
     void recentFilesRequested();
-
     void exitRequested();
 
 private slots:
     void onNewFileTriggered();
     void onOpenFileTriggered();
     void onCloseFileTriggered();
-
     void onSaveFileTriggered();
     void onSaveAsFileTriggered();
     void onSaveAllFilesTriggered();
-
     void onPrintFileTriggered();
-
     void onRecentFilesTriggered();
-
     void onExitTriggered();
 
 private:

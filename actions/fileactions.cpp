@@ -57,14 +57,49 @@ FileActions::FileActions(QWidget *parentWindow, QObject *parent)
         connect(exitAction, &QAction::hovered, this, &FileActions::onExitTriggered);
 }
 
+void FileActions::populateMenu(QMenu *menu) {
+    menu->addAction(newFileAction);
+    menu->addAction(openFileAction);
+    menu->addAction(closeFileAction);
+
+    menu->addSeparator();
+    menu->addAction(saveFileAction);
+    menu->addAction(saveAsFileAction);
+    menu->addAction(saveAllFilesAction);
+
+    menu->addSeparator();
+    menu->addAction(printFileAction);
+
+    menu->addSeparator();
+    menu->addAction(recentFilesAction);
+
+    menu->addSeparator();
+    menu->addAction(exitAction);
+}
+
+QToolBar* FileActions::createToolBar(QWidget *parent) {
+    QToolBar *toolbar = new QToolBar(tr("File Toolbar"), parent);
+    toolbar->setObjectName("filetoolbar");
+    toolbar->setIconSize(QSize(16, 16));
+    toolbar->setFloatable(false);
+
+    toolbar->addAction(newFileAction);
+    toolbar->addAction(openFileAction);
+    toolbar->addAction(saveFileAction);
+
+    return toolbar;
+}
+
 void FileActions::onNewFileTriggered() {
     emit newFileRequested();
 }
+
 void FileActions::onOpenFileTriggered() {
     QString fileName = QFileDialog::getOpenFileName(m_parentWindow, tr("Open File"));
     if (!fileName.isEmpty())
         emit openFileRequested(fileName);
 }
+
 void FileActions::onCloseFileTriggered() {
     emit closeFileRequested();
 }
@@ -72,9 +107,11 @@ void FileActions::onCloseFileTriggered() {
 void FileActions::onSaveFileTriggered() {
     emit saveFileRequested();
 }
+
 void FileActions::onSaveAsFileTriggered() {
     emit saveAsFileRequested();
 }
+
 void FileActions::onSaveAllFilesTriggered() {
     emit saveAllFilesRequested();
 }

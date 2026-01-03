@@ -12,59 +12,31 @@
 #include <QEvent>
 #include <QIcon>
 
-void MainWindow::addToolBars() {
-    fileToolBar = new QToolBar("File Toolbar", this);
-    fileToolBar->setObjectName("filetoolbar");
-    fileToolBar->setIconSize(QSize(16,16));
-    fileToolBar->setFloatable(false);
-
-    fileToolBar->addAction(fileActions->newFileAction);
-    fileToolBar->addAction(fileActions->openFileAction);
-    fileToolBar->addAction(fileActions->saveFileAction);
-
-    addToolBar(Qt::TopToolBarArea, fileToolBar);
-}
-
-void MainWindow::addActions() {
-    ui->menuFile->addAction(fileActions->newFileAction);
-    ui->menuFile->addAction(fileActions->openFileAction);
-    ui->menuFile->addAction(fileActions->closeFileAction);
-
-    ui->menuFile->addSection(NULL); // separator
-    ui->menuFile->addAction(fileActions->saveFileAction);
-    ui->menuFile->addAction(fileActions->saveAsFileAction);
-    ui->menuFile->addAction(fileActions->saveAllFilesAction);
-
-    ui->menuFile->addSection(NULL); // separator
-    ui->menuFile->addAction(fileActions->printFileAction);
-
-    ui->menuFile->addSection(NULL); // separator
-    ui->menuFile->addAction(fileActions->recentFilesAction);
-
-    ui->menuFile->addSection(NULL); // separator
-    ui->menuFile->addAction(fileActions->exitAction);
-}
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     resizeDocks({ui->outputWidget}, {160}, Qt::Vertical);
     resizeDocks({ui->tasksWidget, ui->navigatorWidget, ui->variablesWidget}, {280, 280, 200}, Qt::Horizontal);
+
     setCentralWidget(ui->centralwidget);
     ui->centralwidget->layout()->setContentsMargins(0, 0, 0, 0);
     this->setContextMenuPolicy(Qt::NoContextMenu);
-    fileActions = new FileActions(this);
-
-    addToolBars();
-    addActions();
 
     central = new QTabWidget(this);
     central->setObjectName("viewertab");
     central->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     central->setTabsClosable(true);
     central->setMovable(true);
+
+    actionsManager = new ActionsManager(this);
+    documentsManager = new DocumentsManager(central, this);
+    // QList<QDockWidget*> docks = findChildren<QDockWidget*>();
+    docksManager = new DocksManager(findChildren<QDockWidget*>(), this);
+
+    setupUI();
 
     QTabBar *bar = central->tabBar();
     bar->setExpanding(false);
@@ -90,8 +62,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     updateSingleProperty();
 
-    documentsManager = new DocumentsManager(central, this);
-
     ui->horizontalLayout->setContentsMargins(0, 0, 0, 0);
     ui->horizontalLayout->addWidget(central, 1);
 
@@ -102,28 +72,34 @@ MainWindow::MainWindow(QWidget *parent)
         Styling::applyDropShadowEffect(menu);
     }
 
-    connect(fileActions, &FileActions::saveFileRequested,
+    connect(actionsManager->file, &FileActions::saveFileRequested,
             documentsManager,
             static_cast<void (DocumentsManager::*)()>(&DocumentsManager::saveCurrentDocument));
 
-    connect(fileActions, &FileActions::newFileRequested,
+    connect(actionsManager->file, &FileActions::newFileRequested,
             documentsManager,
             &DocumentsManager::createNewDocument);
 
-    connect(fileActions, &FileActions::openFileRequested,
+    connect(actionsManager->file, &FileActions::openFileRequested,
             documentsManager,
             &DocumentsManager::openDocument);
 
-    connect(fileActions, &FileActions::closeFileRequested,
+    connect(actionsManager->file, &FileActions::closeFileRequested,
             documentsManager,
             static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
 
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager,
             static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
+}
 
-    QList<QDockWidget*> docks = findChildren<QDockWidget*>();
-    docksManager = new DocksManager(docks, this);
+void MainWindow::setupUI() {
+    actionsManager->setupMenus(ui->menuFile, ui->menuEdit);
+
+    for (QToolBar *toolbar : actionsManager->createToolBars(this)) {
+        qDebug() << toolbar;
+        addToolBar(Qt::TopToolBarArea, toolbar);
+    }
 }
 
 void MainWindow::changeEvent(QEvent *event)
