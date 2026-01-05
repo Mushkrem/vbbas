@@ -16,25 +16,31 @@ void DocumentsManager::createNewDocument() {
     m_tabWidget->setCurrentIndex(index);
 
     auto *wrapper = new QWidget;
+    wrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    wrapper->setAttribute(Qt::WA_TransparentForMouseEvents);
+
     auto *layout = new QHBoxLayout(wrapper);
     layout->setContentsMargins(6, 0, 6, 0);
     layout->setSpacing(0);
 
-    QLabel *label = new QLabel(document->title() + "     .");
+    QIcon icon = QIcon::fromTheme("format-justify-left");
+
+    auto *iconLabel = new QLabel;
+    iconLabel->setPixmap(icon.pixmap(16, 16));
+    iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    auto *label = new QLabel(document->title() + "     .");
     label->setTextFormat(Qt::RichText);
-    // label->setStyleSheet("margin-left: 6px;");
+    label->setStyleSheet("margin-left: 6px;");
     label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-    wrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    wrapper->setAttribute(Qt::WA_TransparentForMouseEvents);
-
+    layout->addWidget(iconLabel);
     layout->addWidget(label);
 
     m_tabWidget->tabBar()->setTabButton(index, QTabBar::LeftSide, wrapper);
 
     m_labels.insert(document, label);
-
 
     connect(document, &DocumentTab::modifiedChanged,
             this, [this, document](bool modified) {

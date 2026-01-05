@@ -30,17 +30,17 @@ MainWindow::MainWindow(QWidget *parent)
     central->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     central->setTabsClosable(true);
     central->setMovable(true);
+    central->setDocumentMode(true);
 
     actionsManager = new ActionsManager(this);
     documentsManager = new DocumentsManager(central, this);
-    // QList<QDockWidget*> docks = findChildren<QDockWidget*>();
     docksManager = new DocksManager(findChildren<QDockWidget*>(), this);
 
     setupUI();
 
     QTabBar *bar = central->tabBar();
     bar->setExpanding(false);
-    bar->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     bar->setUsesScrollButtons(false);
     bar->setElideMode(Qt::ElideRight);
 
