@@ -6,6 +6,7 @@
 #include <QGraphicsView>
 #include <QStyleHints>
 #include <QDockWidget>
+#include <QMouseEvent>
 #include <QToolBar>
 #include <QTabBar>
 #include <QStyle>
@@ -18,31 +19,33 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    resizeDocks({ui->outputWidget}, {160}, Qt::Vertical);
     resizeDocks({ui->tasksWidget, ui->navigatorWidget, ui->variablesWidget}, {280, 280, 200}, Qt::Horizontal);
+    resizeDocks({ui->outputWidget}, {160}, Qt::Vertical);
 
     setCentralWidget(ui->centralwidget);
     ui->centralwidget->layout()->setContentsMargins(0, 0, 0, 0);
     this->setContextMenuPolicy(Qt::NoContextMenu);
 
     central = new QTabWidget(this);
-    central->setObjectName("viewertab");
     central->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+    central->setObjectName("viewertab");
     central->setTabsClosable(true);
-    central->setMovable(true);
     central->setDocumentMode(true);
+    central->setMovable(true);
 
-    actionsManager = new ActionsManager(this);
-    documentsManager = new DocumentsManager(central, this);
     docksManager = new DocksManager(findChildren<QDockWidget*>(), this);
+    documentsManager = new DocumentsManager(central, this);
+    actionsManager = new ActionsManager(this);
 
     setupUI();
 
     QTabBar *bar = central->tabBar();
-    bar->setExpanding(false);
     bar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    bar->setUsesScrollButtons(false);
     bar->setElideMode(Qt::ElideRight);
+    bar->setUsesScrollButtons(false);
+    bar->installEventFilter(this);
+    bar->setExpanding(false);
+    // bar->setContextMenuPolicy(Qt::CustomContextMenu);
 
     auto updateSingleProperty = [this]() {
         QTabBar *bar = central->tabBar();
@@ -100,6 +103,21 @@ void MainWindow::setupUI() {
         qDebug() << toolbar;
         addToolBar(Qt::TopToolBarArea, toolbar);
     }
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == central->tabBar() && event->type() == QEvent::MouseButtonRelease) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::MiddleButton) {
+            int tabIndex = central->tabBar()->tabAt(mouseEvent->pos());
+            if (tabIndex != -1) {
+                documentsManager->closeDocument(tabIndex);
+                return true;
+            }
+        }
+    }
+    return QMainWindow::eventFilter(watched, event);
 }
 
 void MainWindow::changeEvent(QEvent *event)

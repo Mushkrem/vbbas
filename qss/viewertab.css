@@ -15,7 +15,7 @@ QTabBar::tab {
     border-top-right-radius: 2px;
     background: palette(Dark);
     color: palette(ToolTipText);
-    padding-left: 10px;
+    /* padding-left: 10px; */
     padding-right: 5px;
     padding-top: 3px;
     padding-bottom: 3px;
