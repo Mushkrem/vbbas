@@ -6,12 +6,21 @@
 #include <QAction>
 #include <QMenu>
 
+class IDocumentInfo;
+
 class FileActions : public QObject
 {
     Q_OBJECT
 public:
     explicit FileActions(QWidget *parentWindow, QObject *parent = nullptr);
 
+    void setDocumentInfo(IDocumentInfo *documentInfo);
+
+    void populateMenu(QMenu *menu);
+    QToolBar* createToolBar(QWidget *parent);
+    void updateActionStates();
+
+protected:
     QAction* newFileAction;
     QAction* openFileAction;
     QAction* closeFileAction;
@@ -21,9 +30,6 @@ public:
     QAction* printFileAction;
     QAction* recentFilesAction;
     QAction* exitAction;
-
-    void populateMenu(QMenu *menu);
-    QToolBar* createToolBar(QWidget *parent);
 
 signals:
     void newFileRequested();
@@ -49,6 +55,7 @@ private slots:
 
 private:
     QWidget *m_parentWindow;
+    IDocumentInfo *m_documentInfo = nullptr;
 };
 
 #endif // FILEACTIONS_H

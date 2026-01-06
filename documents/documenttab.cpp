@@ -34,16 +34,19 @@ DocumentTab::DocumentTab(QWidget *parent)
 
     m_scene = new QGraphicsScene(this);
     m_view = new QGraphicsView(m_scene, this);
+    m_modified = true;
 
     layout->addWidget(m_view);
 }
 
 void DocumentTab::initialize()
 {
-    emit modifiedChanged(true);
+
+    emit modifiedChanged(m_modified);
 }
 
 void DocumentTab::save() {
     // to do
-    emit modifiedChanged(false);
+    m_modified = false;
+    emit modifiedChanged(m_modified);
 }

@@ -40,6 +40,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
         docks/tasksdock.h docks/tasksdock.cpp
         actions/editactions.h actions/editactions.cpp
         actions/actionsmanager.h actions/actionsmanager.cpp
+        documents/idocumentinfo.h
     )
 
 target_include_directories(vbbas PRIVATE

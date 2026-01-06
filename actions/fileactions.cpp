@@ -1,4 +1,5 @@
 #include "fileactions.h"
+#include "../documents/idocumentinfo.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -90,6 +91,11 @@ QToolBar* FileActions::createToolBar(QWidget *parent) {
     return toolbar;
 }
 
+void FileActions::setDocumentInfo(IDocumentInfo *documentInfo) {
+    m_documentInfo = documentInfo;
+    updateActionStates();
+}
+
 void FileActions::onNewFileTriggered() {
     emit newFileRequested();
 }
@@ -105,10 +111,17 @@ void FileActions::onCloseFileTriggered() {
 }
 
 void FileActions::onSaveFileTriggered() {
+    qDebug() << "Save file triggered!";
     emit saveFileRequested();
 }
 
 void FileActions::onSaveAsFileTriggered() {
+    QString initial = m_documentInfo->currentDocumentName();
+    QUrl fileUrl = QFileDialog::getSaveFileUrl(
+                    m_parentWindow,
+                    tr("Save As..."),
+                    initial,
+                    "Algorithm Files (*.vib)");
     emit saveAsFileRequested();
 }
 
@@ -126,4 +139,18 @@ void FileActions::onRecentFilesTriggered() {
 
 void FileActions::onExitTriggered() {
     emit exitRequested();
+}
+
+void FileActions::updateActionStates()
+{
+    if (!m_documentInfo) return;
+
+    bool hasDocuments = m_documentInfo->hasOpenDocuments();
+    bool documentModified = m_documentInfo->currentDocumentModified();
+
+    saveFileAction->setEnabled(hasDocuments && documentModified); // ?edited
+    saveAsFileAction->setEnabled(hasDocuments);
+    saveAllFilesAction->setEnabled(hasDocuments);
+    closeFileAction->setEnabled(hasDocuments);
+    printFileAction->setEnabled(hasDocuments);
 }

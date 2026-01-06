@@ -8,6 +8,27 @@
 DocumentsManager::DocumentsManager(QTabWidget *tabWidget, QObject *parent)
     : QObject(parent), m_tabWidget(tabWidget) {}
 
+// IDocument
+QString DocumentsManager::currentDocumentName() const {
+    DocumentTab *doc = currentDocument();
+    return doc ? doc->title() : QString();
+}
+
+bool DocumentsManager::currentDocumentModified() const {
+    DocumentTab *doc = currentDocument();
+    return doc ? doc->isModified() : false;
+}
+
+bool DocumentsManager::hasOpenDocuments() const {
+    return !m_documents.empty();
+}
+
+int DocumentsManager::documentCount() const {
+    return m_documents.size();
+}
+
+//
+
 void DocumentsManager::createNewDocument() {
     auto *document = new DocumentTab;
     m_documents.append(document);
@@ -55,6 +76,7 @@ void DocumentsManager::createNewDocument() {
                     label->setText(base);
                 m_tabWidget->tabBar()->update();
                 m_tabWidget->updateGeometry();
+                emit documentModificationChanged(modified);
             });
 
     document->initialize();
@@ -72,6 +94,7 @@ void DocumentsManager::openDocument(const QString &path) {
 
 void DocumentsManager::saveDocument(DocumentTab *document) {
     // to do
+    qDebug("save!");
     document->save();
 }
 

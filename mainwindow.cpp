@@ -75,32 +75,43 @@ MainWindow::MainWindow(QWidget *parent)
         Styling::applyDropShadowEffect(menu);
     }
 
-    connect(actionsManager->file, &FileActions::saveFileRequested,
-            documentsManager,
-            static_cast<void (DocumentsManager::*)()>(&DocumentsManager::saveCurrentDocument));
+    connectActions();
+}
 
+void MainWindow::connectActions() {
+    actionsManager->file->setDocumentInfo(documentsManager);
+
+    // action → document
     connect(actionsManager->file, &FileActions::newFileRequested,
-            documentsManager,
-            &DocumentsManager::createNewDocument);
-
+            documentsManager, &DocumentsManager::createNewDocument);
     connect(actionsManager->file, &FileActions::openFileRequested,
-            documentsManager,
-            &DocumentsManager::openDocument);
-
+            documentsManager, &DocumentsManager::openDocument);
+    connect(actionsManager->file, &FileActions::saveFileRequested,
+            documentsManager, &DocumentsManager::saveCurrentDocument);
     connect(actionsManager->file, &FileActions::closeFileRequested,
-            documentsManager,
-            static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
+            documentsManager, static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
 
+    // document → action states
+    connect(documentsManager, &DocumentsManager::documentCreated,
+            actionsManager->file, &FileActions::updateActionStates);
+    connect(documentsManager, &DocumentsManager::documentClosed,
+            actionsManager->file, &FileActions::updateActionStates);
+    connect(documentsManager, &DocumentsManager::documentOpened,
+            actionsManager->file, &FileActions::updateActionStates);
+    connect(documentsManager, &DocumentsManager::documentModificationChanged,
+            actionsManager->file, &FileActions::updateActionStates);
+
+    // central
     connect(central, &QTabWidget::tabCloseRequested,
-            documentsManager,
-            static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
+            documentsManager, static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
+    connect(central, &QTabWidget::tabBarClicked,
+            actionsManager->file, &FileActions::updateActionStates);
 }
 
 void MainWindow::setupUI() {
     actionsManager->setupMenus(ui->menuFile, ui->menuEdit);
 
     for (QToolBar *toolbar : actionsManager->createToolBars(this)) {
-        qDebug() << toolbar;
         addToolBar(Qt::TopToolBarArea, toolbar);
     }
 }

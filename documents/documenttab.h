@@ -15,6 +15,7 @@ public:
     QString title() const { return m_title; }
 
     void save();
+    bool isModified() const { return m_modified; };
 
     void setTitle(const QString &title) { m_title = title; }
     void initialize();
@@ -26,6 +27,7 @@ private:
     QString m_title = "Untitled";
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
+    bool m_modified;
 };
 
 #endif // DOCUMENTTAB_H
