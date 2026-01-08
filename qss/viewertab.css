@@ -3,7 +3,7 @@ QTabBar {
 }
 
 QTabWidget::pane {
-    border-top: 1px solid palette(Mid);
+    border-top: 1px solid red;
     background: transparent;
     top: -1px;
     padding: 0;
@@ -15,7 +15,6 @@ QTabBar::tab {
     border-top-right-radius: 2px;
     background: palette(Dark);
     color: palette(ToolTipText);
-    /* padding-left: 10px; */
     padding-right: 5px;
     padding-top: 3px;
     padding-bottom: 3px;
@@ -46,4 +45,11 @@ QToolBar#toolstoolbar {
 
 QToolBar#toolstoolbar::handle {
     image: url(:/icons/toolbar-handle.png);
+}
+
+QToolBar {
+    background-color: transparent;
+    min-height: 28px;
+    max-height: 28px;
+    border: none;
 }

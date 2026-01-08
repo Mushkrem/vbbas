@@ -1,6 +1,5 @@
 #include "documenttab.h"
 #include <QVBoxLayout>
-#include <qtoolbar.h>
 
 DocumentTab::DocumentTab(QWidget *parent)
     : QWidget(parent)
@@ -9,34 +8,47 @@ DocumentTab::DocumentTab(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    QToolBar *toolsToolBar = new QToolBar("Tools Toolbar", this);
-    toolsToolBar->setObjectName("toolstoolbar");
-    toolsToolBar->setIconSize(QSize(16,16));
-    toolsToolBar->setFloatable(false);
+    QHBoxLayout *toolbarsLayout = new QHBoxLayout();
+    toolbarsLayout->setObjectName("document_toolbar");
+    toolbarsLayout->setContentsMargins(0,0,0,0);
+    toolbarsLayout->setSpacing(0);
 
-    QAction *saveAction = new QAction(
-        QIcon::fromTheme("document-save"),
-        "Save",
-        this
-        );
-    toolsToolBar->addAction(saveAction);
+    m_toolsToolBar = new QToolBar("Tools Toolbar", this);
+    m_toolsToolBar->setObjectName("toolstoolbar");
+    m_toolsToolBar->setIconSize(QSize(16,16));
+    m_toolsToolBar->setFloatable(false);
 
-    toolsToolBar->addSeparator();
+    m_editToolBar = new QToolBar("Edit Toolbar", this);
+    m_editToolBar->setObjectName("edittoolbar");
+    m_editToolBar->setIconSize(QSize(16,16));
+    m_editToolBar->setFloatable(false);
 
-    QAction *printAction = new QAction(
-        QIcon::fromTheme("document-print"),
-        "Print",
-        this
-        );
-    toolsToolBar->addAction(printAction);
+    toolbarsLayout->addWidget(m_toolsToolBar);
+    toolbarsLayout->addWidget(m_editToolBar);
+    toolbarsLayout->addStretch();
 
-    layout->addWidget(toolsToolBar);
+    layout->addLayout(toolbarsLayout);
 
     m_scene = new QGraphicsScene(this);
     m_view = new QGraphicsView(m_scene, this);
     m_modified = true;
 
     layout->addWidget(m_view);
+}
+
+void DocumentTab::setFileActions(QList<QAction*> actions) {
+    for (QAction *action : actions) {
+        m_toolsToolBar->addAction(action);
+    }
+}
+
+void DocumentTab::setEditActions(QList<QAction*> actions) {
+    m_editToolBar->addSeparator();
+    for (QAction *action : actions) {
+        if(action->toolTip() == "Undo")
+            m_editToolBar->addSeparator();
+        m_editToolBar->addAction(action);
+    }
 }
 
 void DocumentTab::initialize()

@@ -4,8 +4,6 @@ ActionsManager::ActionsManager(QWidget *parentWindow, QObject *parent)
     : QObject(parent) {
     file = new FileActions(parentWindow, this);
     edit = new EditActions(parentWindow, this);
-
-    qDebug() << "thjis!";
 }
 
 void ActionsManager::setupMenus(QMenu *fileMenu, QMenu *editMenu) {

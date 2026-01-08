@@ -54,7 +54,7 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout" stretch="">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
        <number>0</number>
       </property>
@@ -80,7 +80,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>27</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
@@ -209,7 +209,7 @@ QMenu::Item:selected {
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4"/>
   </widget>
-  <widget class="QDockWidget" name="navigatorWidget">
+  <widget class="NavigatorDock" name="navigatorWidget">
    <property name="minimumSize">
     <size>
      <width>150</width>
@@ -233,7 +233,7 @@ QMenu::Item:selected {
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_5"/>
   </widget>
-  <widget class="QDockWidget" name="variablesWidget">
+  <widget class="VariablesDock" name="variablesWidget">
    <property name="minimumSize">
     <size>
      <width>100</width>
@@ -254,7 +254,7 @@ QMenu::Item:selected {
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_6"/>
   </widget>
-  <widget class="QDockWidget" name="outputWidget">
+  <widget class="OutputDock" name="outputWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
@@ -468,6 +468,24 @@ QMenu::Item:selected {
    <class>TasksDock</class>
    <extends>QDockWidget</extends>
    <header>tasksdock.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NavigatorDock</class>
+   <extends>QDockWidget</extends>
+   <header>navigatordock.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OutputDock</class>
+   <extends>QDockWidget</extends>
+   <header>outputdock.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VariablesDock</class>
+   <extends>QDockWidget</extends>
+   <header>variablesdock.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

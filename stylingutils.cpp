@@ -41,7 +41,7 @@ int applyQssIfAvailable(QWidget *widget, QString basePath) {
     // Look for related .css files to apply the styling.
     if(!key.isEmpty()) {
         QFile file(qssFilePath);
-        // qDebug() << "Looking for: " << key;
+        qDebug() << "Looking for: " << key;
         if(file.exists() && file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             widget->setStyleSheet(file.readAll());
             file.close();

@@ -101,6 +101,22 @@ void MainWindow::connectActions() {
     connect(documentsManager, &DocumentsManager::documentModificationChanged,
             actionsManager->file, &FileActions::updateActionStates);
 
+    connect(documentsManager, &DocumentsManager::documentCreated,
+            this, [this](DocumentTab *document) {
+                document->setFileActions(QList<QAction*>{
+                    actionsManager->file->saveFileAction,
+                    actionsManager->file->printFileAction
+                });
+
+                document->setEditActions(QList<QAction*>{
+                    actionsManager->edit->CutAction,
+                    actionsManager->edit->CopyAction,
+                    actionsManager->edit->PasteAction,
+                    actionsManager->edit->UndoAction,
+                    actionsManager->edit->RedoAction,
+                });
+            });
+
     // central
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager, static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));

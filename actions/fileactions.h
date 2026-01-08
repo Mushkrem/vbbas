@@ -20,7 +20,6 @@ public:
     QToolBar* createToolBar(QWidget *parent);
     void updateActionStates();
 
-protected:
     QAction* newFileAction;
     QAction* openFileAction;
     QAction* closeFileAction;
