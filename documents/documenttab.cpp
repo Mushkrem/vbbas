@@ -37,9 +37,8 @@ DocumentTab::DocumentTab(QWidget *parent)
 }
 
 void DocumentTab::setFileActions(QList<QAction*> actions) {
-    for (QAction *action : actions) {
+    for (QAction *action : actions)
         m_toolsToolBar->addAction(action);
-    }
 }
 
 void DocumentTab::setEditActions(QList<QAction*> actions) {
@@ -51,6 +50,21 @@ void DocumentTab::setEditActions(QList<QAction*> actions) {
     }
 }
 
+void DocumentTab::setObjectActions(QList<QAction*> actions) {
+    m_editToolBar->addSeparator();
+    for (QAction *action : actions) {
+        if(action->toolTip() == "Statement block")
+            m_editToolBar->addSeparator();
+        m_editToolBar->addAction(action);
+    }
+}
+
+void DocumentTab::setTitle(const QString &title) {
+    m_newTitle = title;
+    m_modified = true;
+    emit modifiedChanged(m_modified);
+}
+
 void DocumentTab::initialize()
 {
 
@@ -58,7 +72,9 @@ void DocumentTab::initialize()
 }
 
 void DocumentTab::save() {
+    qDebug() << "DocumentTab Save";
     // to do
     m_modified = false;
+    m_title = m_newTitle;
     emit modifiedChanged(m_modified);
 }

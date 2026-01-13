@@ -1,17 +1,42 @@
 #include "documentsmanager.h"
 
+#include <QMenu>
 #include <QLabel>
 #include <QTabBar>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QMessageBox>
+#include <QInputDialog>
+#include <QRegularExpression>
+
+namespace {
+    QRegularExpression validNameRegex("^[A-Za-z0-9_]+$");
+    QRegularExpression illegalCharsRegex("[^A-Za-z0-9_]");
+}
 
 DocumentsManager::DocumentsManager(QTabWidget *tabWidget, QObject *parent)
-    : QObject(parent), m_tabWidget(tabWidget) {}
+    : QObject(parent), m_tabWidget(tabWidget)
+{
+    setupTabBarContextMenu();
+}
+
+void DocumentsManager::changeCurrentDocument(int index) {
+    m_documentIndex = index;
+    m_tabWidget->setCurrentIndex(index);
+    emit documentChanged(index);
+}
 
 // IDocument
 QString DocumentsManager::currentDocumentName() const {
     DocumentTab *doc = currentDocument();
     return doc ? doc->title() : QString();
+}
+
+void DocumentsManager::setupTabBarContextMenu() {
+    m_tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    connect(m_tabWidget->tabBar(), &QTabBar::customContextMenuRequested,
+            this, &DocumentsManager::showTabContextMenu);
 }
 
 bool DocumentsManager::currentDocumentModified() const {
@@ -23,87 +48,174 @@ bool DocumentsManager::hasOpenDocuments() const {
     return !m_documents.empty();
 }
 
+bool DocumentsManager::hasAnythingSelected() const {
+    DocumentTab *doc = currentDocument();
+    return doc ? doc->isModified() : false;
+}
+
 int DocumentsManager::documentCount() const {
     return m_documents.size();
 }
 
-//
+// ~IDocument
+
+void DocumentsManager::showTabContextMenu(const QPoint &position) {
+    int tabIndex = m_tabWidget->tabBar()->tabAt(position);
+    if (tabIndex < 0)
+        return;
+
+    QMenu contextMenu(m_tabWidget);
+    QAction *renameAction = contextMenu.addAction(tr("Rename..."));
+    QAction *closeAction = contextMenu.addAction(tr("Close"));
+
+    contextMenu.addSeparator();
+
+    QAction *closeOthersAction = contextMenu.addAction(tr("Close Others"));
+    QAction *closeAllAction = contextMenu.addAction(tr("Close All"));
+
+    QAction *selectedAction = contextMenu.exec(m_tabWidget->tabBar()->mapToGlobal(position));
+    if (!selectedAction)
+        return;
+
+    // Handle actions
+    if (selectedAction == renameAction) {
+        renameDocument(tabIndex);
+    } else if (selectedAction == closeAction) {
+        closeDocument(tabIndex);
+    } else if (selectedAction == closeOthersAction) {
+        for (int i = m_tabWidget->count() - 1; i >= 0; --i) {
+            if (i != tabIndex) {
+                closeDocument(i);
+            }
+        }
+    } else if (selectedAction == closeAllAction) {
+        for (int i = m_tabWidget->count() - 1; i >= 0; --i) {
+            closeDocument(i);
+        }
+    }
+}
+
+void DocumentsManager::drawDocumentBar(DocumentTab *document) {
+    int index = documentIndexOf(document);
+    auto *wrapper = new QWidget;
+    wrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    wrapper->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    auto *layout = new QHBoxLayout(wrapper);
+    layout->setContentsMargins(6, 0, 3, 0);
+    layout->setSpacing(6);
+    layout->setAlignment(Qt::AlignLeft);
+
+    QIcon icon = QIcon::fromTheme("format-justify-left");
+    auto *iconLabel = new QLabel;
+    iconLabel->setPixmap(icon.pixmap(16, 16));
+    iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
+
+    QString title = document->newTitle();
+    auto *label = new QLabel(title);
+    label->setTextFormat(Qt::RichText);
+    label->setAlignment(Qt::AlignLeft | Qt::AlignTop); // Unless I'm blind AlignTop looks better than AlignCenter
+    label->setAttribute(Qt::WA_TransparentForMouseEvents);
+    if (document->isModified()) {
+        title.append("*");
+        label->setText(title);
+        // label->setStyleSheet("font-style: italic;");
+    }
+
+    layout->addWidget(iconLabel);
+    layout->addWidget(label);
+
+    m_tabWidget->tabBar()->setTabButton(index, QTabBar::LeftSide, wrapper);
+    m_labels.insert(document, label);
+}
 
 void DocumentsManager::createNewDocument() {
     auto *document = new DocumentTab;
     m_documents.append(document);
 
     int index = m_tabWidget->addTab(document, "");
-    m_tabWidget->setCurrentIndex(index);
-
-    auto *wrapper = new QWidget;
-    wrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    wrapper->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-    auto *layout = new QHBoxLayout(wrapper);
-    layout->setContentsMargins(6, 0, 6, 0);
-    layout->setSpacing(0);
-
-    QIcon icon = QIcon::fromTheme("format-justify-left");
-
-    auto *iconLabel = new QLabel;
-    iconLabel->setPixmap(icon.pixmap(16, 16));
-    iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-    auto *label = new QLabel(document->title() + "     .");
-    label->setTextFormat(Qt::RichText);
-    label->setStyleSheet("margin-left: 6px;");
-    label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    label->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-    layout->addWidget(iconLabel);
-    layout->addWidget(label);
-
-    m_tabWidget->tabBar()->setTabButton(index, QTabBar::LeftSide, wrapper);
-
-    m_labels.insert(document, label);
+    changeCurrentDocument(index);
+    drawDocumentBar(document);
 
     connect(document, &DocumentTab::modifiedChanged,
-            this, [this, document](bool modified) {
-                QLabel *label = m_labels.value(document);
-                if (!label)
-                    return;
-
-                QString base = document->title();
-                if (modified)
-                    label->setText("<i>" + base + "*</i>");
-                else
-                    label->setText(base);
-                m_tabWidget->tabBar()->update();
-                m_tabWidget->updateGeometry();
-                emit documentModificationChanged(modified);
-            });
+            this, &DocumentsManager::documentModificationChanged);
 
     document->initialize();
 
     emit documentCreated(document);
 }
 
+void DocumentsManager::renameDocument(int index) {
+    DocumentTab *document = qobject_cast<DocumentTab*>(m_tabWidget->widget(index));
+    if (!document)
+        return;
+
+    QString currentName = document->newTitle();
+    bool changed = false;
+
+    QString newName = QInputDialog::getText(
+        m_tabWidget,
+        tr("Rename Document"),
+        tr("Enter new name:"),
+        QLineEdit::Normal,
+        currentName,
+        &changed
+    );
+
+    newName.replace(" ", ""); // Remove whitespaces
+
+    if (changed && !newName.isEmpty() && newName != currentName) {
+        if (!validNameRegex.match(newName).hasMatch()) {
+            QStringList illegalChars;
+            auto it = illegalCharsRegex.globalMatch(newName);
+            while (it.hasNext()) {
+                illegalChars << it.next().captured(0);
+            }
+            illegalChars.removeDuplicates();
+
+            QMessageBox::critical(
+                m_tabWidget,
+                tr("Invalid Name"),
+                tr("Your input contains invalid characters.\n"
+                   "File names cannot contain the following characters: "
+                   "'%1'").arg(illegalChars.join(" "))
+            );
+            return;
+        }
+        document->setTitle(newName);
+        drawDocumentBar(document);
+    }
+}
+
 void DocumentsManager::openDocument(const QString &path) {
     auto *document = new DocumentTab;
     document->setTitle(QFileInfo(path).fileName());
+
     // to do
+    // changeCurrentDocument(index);
 
     emit documentOpened(document);
 }
 
 void DocumentsManager::saveDocument(DocumentTab *document) {
     // to do
-    qDebug("save!");
+    qDebug() << "DocumentsManager Save";
     document->save();
+    drawDocumentBar(document);
 }
 
 void DocumentsManager::saveCurrentDocument() {
-    DocumentTab *document = DocumentsManager::currentDocument();
+    DocumentTab *document = currentDocument();
     if(!document)
         return;
 
-    DocumentsManager::saveDocument(document);
+    saveDocument(document);
+}
+
+void DocumentsManager::saveAllDocuments() {
+    for( DocumentTab *document : m_documents)
+        if (document->isModified())
+            saveDocument(document);
 }
 
 void DocumentsManager::closeDocument(int index) {
@@ -114,11 +226,17 @@ void DocumentsManager::closeDocument(int index) {
     m_documents.removeOne(document);
     m_tabWidget->removeTab(index);
     document->deleteLater();
+    if(index > 0)
+        changeCurrentDocument(index - 1);
 
     emit documentClosed(document);
 }
 
 void DocumentsManager::closeDocument() {
     int index = m_tabWidget->currentIndex();
-    DocumentsManager::closeDocument(index);
+    closeDocument(index);
+}
+
+void DocumentsManager::onTabMoved(int to) {
+    m_documentIndex = to;
 }

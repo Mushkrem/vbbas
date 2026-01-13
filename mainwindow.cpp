@@ -80,6 +80,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::connectActions() {
     actionsManager->file->setDocumentInfo(documentsManager);
+    actionsManager->edit->setDocumentInfo(documentsManager);
+    actionsManager->build->setDocumentInfo(documentsManager);
 
     // action → document
     connect(actionsManager->file, &FileActions::newFileRequested,
@@ -88,19 +90,10 @@ void MainWindow::connectActions() {
             documentsManager, &DocumentsManager::openDocument);
     connect(actionsManager->file, &FileActions::saveFileRequested,
             documentsManager, &DocumentsManager::saveCurrentDocument);
+    connect(actionsManager->file, &FileActions::saveAllFilesRequested,
+            documentsManager, &DocumentsManager::saveAllDocuments);
     connect(actionsManager->file, &FileActions::closeFileRequested,
             documentsManager, static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
-
-    // document → action states
-    connect(documentsManager, &DocumentsManager::documentCreated,
-            actionsManager->file, &FileActions::updateActionStates);
-    connect(documentsManager, &DocumentsManager::documentClosed,
-            actionsManager->file, &FileActions::updateActionStates);
-    connect(documentsManager, &DocumentsManager::documentOpened,
-            actionsManager->file, &FileActions::updateActionStates);
-    connect(documentsManager, &DocumentsManager::documentModificationChanged,
-            actionsManager->file, &FileActions::updateActionStates);
-
     connect(documentsManager, &DocumentsManager::documentCreated,
             this, [this](DocumentTab *document) {
                 document->setFileActions(QList<QAction*>{
@@ -109,23 +102,41 @@ void MainWindow::connectActions() {
                 });
 
                 document->setEditActions(QList<QAction*>{
-                    actionsManager->edit->CutAction,
-                    actionsManager->edit->CopyAction,
-                    actionsManager->edit->PasteAction,
-                    actionsManager->edit->UndoAction,
-                    actionsManager->edit->RedoAction,
+                    actionsManager->edit->cutAction,
+                    actionsManager->edit->copyAction,
+                    actionsManager->edit->pasteAction,
+                    actionsManager->edit->undoAction,
+                    actionsManager->edit->redoAction
+                });
+
+                document->setObjectActions(QList<QAction*>{
+                    actionsManager->object->startObjectAction,
+                    actionsManager->object->stopObjectAction,
+                    actionsManager->object->eventObjectAction,
+                    actionsManager->object->statementObjectAction,
+                    actionsManager->object->conditionalObjectAction,
+                    actionsManager->object->interactionObjectAction,
                 });
             });
 
-    // central
+    // document change → action states
+    connect(documentsManager, &DocumentsManager::documentChanged,
+            actionsManager->file, &FileActions::updateActionStates);
+    connect(documentsManager, &DocumentsManager::documentModificationChanged,
+            actionsManager->file, &FileActions::updateActionStates);
+
+    // tabs → documents
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager, static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
     connect(central, &QTabWidget::tabBarClicked,
-            actionsManager->file, &FileActions::updateActionStates);
+            documentsManager, &DocumentsManager::changeCurrentDocument);
+    QTabBar *tab = central->tabBar();
+    connect(tab, &QTabBar::tabMoved,
+            documentsManager, &DocumentsManager::onTabMoved);
 }
 
 void MainWindow::setupUI() {
-    actionsManager->setupMenus(ui->menuFile, ui->menuEdit);
+    actionsManager->setupMenus(ui->menuFile, ui->menuEdit, ui->menuView, ui->menuBuild, ui->menuTools, ui->menuHelp);
 
     for (QToolBar *toolbar : actionsManager->createToolBars(this)) {
         addToolBar(Qt::TopToolBarArea, toolbar);

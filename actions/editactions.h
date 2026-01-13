@@ -1,6 +1,8 @@
 #ifndef EDITACTIONS_H
 #define EDITACTIONS_H
 
+#include "../documents/idocumentinfo.h"
+
 #include <QToolBar>
 #include <QObject>
 #include <QAction>
@@ -12,19 +14,22 @@ class EditActions : public QObject
 public:
     explicit EditActions(QWidget *parentWindow, QObject *parent = nullptr);
 
-    QAction* UndoAction;
-    QAction* RedoAction;
-    QAction* CutAction;
-    QAction* CopyAction;
-    QAction* PasteAction;
-    QAction* DeleteAction;
-    QAction* SelectAllAction;
-    QAction* FindAction;
-    QAction* ReplaceAction;
-    QAction* PropertiesAction;
+    void setDocumentInfo(IDocumentInfo *documentInfo);
+
+    QAction* undoAction;
+    QAction* redoAction;
+    QAction* cutAction;
+    QAction* copyAction;
+    QAction* pasteAction;
+    QAction* deleteAction;
+    QAction* selectAllAction;
+    QAction* findAction;
+    QAction* replaceAction;
+    QAction* propertiesAction;
 
     void populateMenu(QMenu *menu);
     QToolBar* createToolBar(QWidget *parent);
+    void updateActionStates();
 
 signals:
     void undoRequested();
@@ -52,6 +57,7 @@ private slots:
 
 private:
     QWidget *m_parentWindow;
+    IDocumentInfo *m_documentInfo = nullptr;
 };
 
 #endif // EDITACTIONS_H

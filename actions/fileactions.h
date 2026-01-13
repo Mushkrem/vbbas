@@ -1,6 +1,8 @@
 #ifndef FILEACTIONS_H
 #define FILEACTIONS_H
 
+#include "../documents/idocumentinfo.h"
+
 #include <QToolBar>
 #include <QObject>
 #include <QAction>

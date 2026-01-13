@@ -53,3 +53,21 @@ QToolBar {
     max-height: 28px;
     border: none;
 }
+
+QInputDialog {
+    background-color: palette(Window);
+}
+
+QMenu {
+    font-family: 'Segoe UI Variable';
+    background-color: palette(Midlight);
+    border: 1px solid palette(Mid);
+}
+
+QMenu::Item:selected {
+    background-color: palette(highlight);
+}
+
+QMessageBox {
+    qproperty-iconSize: 24px;
+}

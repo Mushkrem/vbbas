@@ -1,5 +1,4 @@
 #include "fileactions.h"
-#include "../documents/idocumentinfo.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -111,7 +110,7 @@ void FileActions::onCloseFileTriggered() {
 }
 
 void FileActions::onSaveFileTriggered() {
-    qDebug() << "Save file triggered!";
+    qDebug() << "FileActions Save";
     emit saveFileRequested();
 }
 
@@ -126,6 +125,7 @@ void FileActions::onSaveAsFileTriggered() {
 }
 
 void FileActions::onSaveAllFilesTriggered() {
+    qDebug() << "FileActions SaveAll";
     emit saveAllFilesRequested();
 }
 

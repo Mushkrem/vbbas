@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setStyle(QStyleFactory::create("Fusion"));
+    QApplication::setAttribute(Qt::AA_DontShowIconsInMenus, false);
 
     auto scheme = QGuiApplication::styleHints()->colorScheme();
     app.setPalette(Styling::createCustomPalette(scheme));

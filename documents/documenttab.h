@@ -14,20 +14,23 @@ public:
     QGraphicsScene *scene() const { return m_scene; }
     QGraphicsView *view() const { return m_view; }
     QString title() const { return m_title; }
+    QString newTitle() const { return m_newTitle; }
 
     void save();
-    bool isModified() const { return m_modified; };
-
-    void setTitle(const QString &title) { m_title = title; }
+    void setTitle(const QString &title);
     void initialize();
 
     void setFileActions(QList<QAction*> actions);
     void setEditActions(QList<QAction*> actions);
+    void setObjectActions(QList<QAction*> actions);
+
+    bool isModified() const { return m_modified; };
 
 signals:
     void modifiedChanged(bool modified);
 
 private:
+    QString m_newTitle = "Untitled";
     QString m_title = "Untitled";
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;

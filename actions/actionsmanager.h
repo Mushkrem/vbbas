@@ -3,6 +3,11 @@
 
 #include "fileactions.h"
 #include "editactions.h"
+#include "viewactions.h"
+#include "buildactions.h"
+#include "toolsactions.h"
+#include "helpactions.h"
+#include "objectactions.h"
 
 #include <QObject>
 
@@ -13,8 +18,14 @@ public:
 
     FileActions *file;
     EditActions *edit;
+    ViewActions *view;
+    BuildActions *build;
+    ToolsActions *tools;
+    HelpActions *help;
 
-    void setupMenus(QMenu *fileMenu, QMenu *editMenu);
+    ObjectActions *object;
+
+    void setupMenus(QMenu *fileMenu, QMenu *editMenu, QMenu *viewMenu, QMenu *buildMenu, QMenu *toolsMenu, QMenu *helpMenu);
     QList<QToolBar*> createToolBars(QWidget *parent);
 };
 

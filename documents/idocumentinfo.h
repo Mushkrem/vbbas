@@ -10,6 +10,7 @@ public:
     virtual QString currentDocumentName() const = 0;
     virtual bool currentDocumentModified() const = 0;
     virtual bool hasOpenDocuments() const = 0;
+    virtual bool hasAnythingSelected() const = 0;
     virtual int documentCount() const = 0;
 };
 

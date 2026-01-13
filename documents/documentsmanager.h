@@ -13,12 +13,16 @@ class DocumentsManager : public QObject, public IDocumentInfo {
 public:
     explicit DocumentsManager(QTabWidget *tabWidget, QObject *parent = nullptr);
     DocumentTab *currentDocument() const {
-        return m_documents.value(m_tabWidget->currentIndex(), nullptr); // For some reason returns THE PREVIOUS tab. Bug
+        return qobject_cast<DocumentTab*>(m_tabWidget->widget(m_documentIndex));
     };
+    int documentIndexOf(DocumentTab *document) const {
+        return m_tabWidget->indexOf(document);
+    }
 
     QString currentDocumentName() const override;
     bool currentDocumentModified() const override;
     bool hasOpenDocuments() const override;
+    bool hasAnythingSelected() const override;
     int documentCount() const override;
 
 public slots:
@@ -26,19 +30,29 @@ public slots:
     void openDocument(const QString &path);
     void saveCurrentDocument();
     void saveDocument(DocumentTab *document);
+    void saveAllDocuments();
     void closeDocument();
     void closeDocument(int index);
+    void renameDocument(int index);
+    void changeCurrentDocument(int index);
+    void onTabMoved(int to);
 
 signals:
     void documentCreated(DocumentTab *document);
     void documentOpened(DocumentTab *document);
     void documentClosed(DocumentTab *document);
+    void documentChanged(int index);
     void documentModificationChanged(bool modified);
 
 private:
     QTabWidget *m_tabWidget;
     QList<DocumentTab*> m_documents;
     QHash<DocumentTab*, QLabel*> m_labels;
+    int m_documentIndex;
+
+    void drawDocumentBar(DocumentTab *document);
+    void setupTabBarContextMenu();
+    void showTabContextMenu(const QPoint &position);
 };
 
 #endif // DOCUMENTSMANAGER_H
