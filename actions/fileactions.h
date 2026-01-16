@@ -37,7 +37,7 @@ signals:
     void openFileRequested(const QString &filePath);
     void closeFileRequested();
     void saveFileRequested();
-    void saveAsFileRequested();
+    void saveAsFileRequested(const QString &filePath);
     void saveAllFilesRequested();
     void printFileRequested();
     void recentFilesRequested();

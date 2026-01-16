@@ -14,24 +14,20 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
+        mainwindow.h mainwindow.cpp
         mainwindow.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
-find_package(Qt6 REQUIRED COMPONENTS Core)
+    find_package(Qt6 REQUIRED COMPONENTS Core)
+    find_package(Qt6 REQUIRED COMPONENTS Core)
 
     qt_add_executable(vbbas
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         resources.qrc
-        stylingutils.h
-        stylingutils.cpp
-        stylingutils.cpp
-        Actions/fileactions.cpp
+        stylingutils.h stylingutils.cpp
         actions/fileactions.h actions/fileactions.cpp
         documents/documenttab.h documents/documenttab.cpp
         documents/documentsmanager.h documents/documentsmanager.cpp
@@ -41,8 +37,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
         actions/editactions.h actions/editactions.cpp
         actions/actionsmanager.h actions/actionsmanager.cpp
         documents/idocumentinfo.h
-        docks/navigatordock.cpp
-        docks/navigatordock.h
+        docks/navigatordock.h docks/navigatordock.cpp
         docks/outputdock.h docks/outputdock.cpp
         docks/variablesdock.h docks/variablesdock.cpp
         actions/viewactions.h actions/viewactions.cpp
@@ -50,6 +45,8 @@ find_package(Qt6 REQUIRED COMPONENTS Core)
         actions/toolsactions.h actions/toolsactions.cpp
         actions/helpactions.h actions/helpactions.cpp
         actions/objectactions.h actions/objectactions.cpp
+        documents/documentserializer.h documents/documentserializer.cpp
+        documents/fileservice.h documents/fileservice.cpp
     )
 
 target_include_directories(vbbas PRIVATE

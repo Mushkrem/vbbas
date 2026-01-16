@@ -1,5 +1,7 @@
 #include "documenttab.h"
+
 #include <QVBoxLayout>
+#include <QFileInfo>
 
 DocumentTab::DocumentTab(QWidget *parent)
     : QWidget(parent)
@@ -56,6 +58,16 @@ void DocumentTab::setObjectActions(QList<QAction*> actions) {
         if(action->toolTip() == "Statement block")
             m_editToolBar->addSeparator();
         m_editToolBar->addAction(action);
+    }
+}
+
+
+void DocumentTab::setFilePath(const QString &filePath) {
+    m_filePath = filePath;
+
+    if (!filePath.isEmpty()) {
+        QFileInfo fileInfo(filePath);
+        setTitle(fileInfo.fileName());
     }
 }
 

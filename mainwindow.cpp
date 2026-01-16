@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->horizontalLayout->addWidget(central, 1);
 
     QList<QAction *> actions = ui->menubar->actions();
-    for (QAction *action : actions) {
+    for (QAction *action : std::as_const(actions)) {
         QMenu *menu = action->menu();
 
         Styling::applyDropShadowEffect(menu);
@@ -92,6 +92,8 @@ void MainWindow::connectActions() {
             documentsManager, &DocumentsManager::saveCurrentDocument);
     connect(actionsManager->file, &FileActions::saveAllFilesRequested,
             documentsManager, &DocumentsManager::saveAllDocuments);
+    connect(actionsManager->file, &FileActions::saveAsFileRequested,
+            documentsManager, &DocumentsManager::saveCurrentDocumentAs);
     connect(actionsManager->file, &FileActions::closeFileRequested,
             documentsManager, static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
     connect(documentsManager, &DocumentsManager::documentCreated,
@@ -138,7 +140,8 @@ void MainWindow::connectActions() {
 void MainWindow::setupUI() {
     actionsManager->setupMenus(ui->menuFile, ui->menuEdit, ui->menuView, ui->menuBuild, ui->menuTools, ui->menuHelp);
 
-    for (QToolBar *toolbar : actionsManager->createToolBars(this)) {
+    const auto toolbars = actionsManager->createToolBars(this);
+    for (QToolBar *toolbar : std::as_const(toolbars)) {
         addToolBar(Qt::TopToolBarArea, toolbar);
     }
 }

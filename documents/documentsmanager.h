@@ -29,7 +29,9 @@ public slots:
     void createNewDocument();
     void openDocument(const QString &path);
     void saveCurrentDocument();
+    void saveCurrentDocumentAs(const QString &path);
     void saveDocument(DocumentTab *document);
+    void saveDocumentAs(DocumentTab *document, const QString &path);
     void saveAllDocuments();
     void closeDocument();
     void closeDocument(int index);

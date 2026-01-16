@@ -1,17 +1,19 @@
 #include "documentsmanager.h"
+#include "fileservice.h"
 
 #include <QMenu>
 #include <QLabel>
 #include <QTabBar>
 #include <QFileInfo>
+#include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QRegularExpression>
 
 namespace {
-    QRegularExpression validNameRegex("^[A-Za-z0-9_]+$");
-    QRegularExpression illegalCharsRegex("[^A-Za-z0-9_]");
+    Q_GLOBAL_STATIC(QRegularExpression, validNameRegex, ("^[A-Za-z0-9_]+$"))
+    Q_GLOBAL_STATIC(QRegularExpression, illegalCharsRegex, ("[^A-Za-z0-9_]"))
 }
 
 DocumentsManager::DocumentsManager(QTabWidget *tabWidget, QObject *parent)
@@ -165,9 +167,9 @@ void DocumentsManager::renameDocument(int index) {
     newName.replace(" ", ""); // Remove whitespaces
 
     if (changed && !newName.isEmpty() && newName != currentName) {
-        if (!validNameRegex.match(newName).hasMatch()) {
+        if (!validNameRegex->match(newName).hasMatch()) {
             QStringList illegalChars;
-            auto it = illegalCharsRegex.globalMatch(newName);
+            auto it = illegalCharsRegex->globalMatch(newName);
             while (it.hasNext()) {
                 illegalChars << it.next().captured(0);
             }
@@ -198,10 +200,25 @@ void DocumentsManager::openDocument(const QString &path) {
 }
 
 void DocumentsManager::saveDocument(DocumentTab *document) {
-    // to do
-    qDebug() << "DocumentsManager Save";
     document->save();
     drawDocumentBar(document);
+}
+
+void DocumentsManager::saveDocumentAs(DocumentTab *document, const QString &path) {
+    QString filePath = path;
+    if (filePath.isNull()) {
+        filePath = QFileDialog::getSaveFileUrl(
+            m_tabWidget,
+            tr("Save As..."),
+            document->newTitle(),
+            "Algorithm Files (*.vib)"
+        ).toString();
+        if (filePath.isNull())
+            return;
+    }
+
+    document->setFilePath(filePath);
+    saveDocument(document);
 }
 
 void DocumentsManager::saveCurrentDocument() {
@@ -209,13 +226,38 @@ void DocumentsManager::saveCurrentDocument() {
     if(!document)
         return;
 
+    // If file changed name or the path is null saveAs.
+    if(document->title() != document->newTitle() || document->filePath().isNull()) {
+        saveDocumentAs(document, nullptr);
+        return;
+    }
+
     saveDocument(document);
 }
 
+void DocumentsManager::saveCurrentDocumentAs(const QString &path) {
+    DocumentTab *document = currentDocument();
+    if(!document)
+        return;
+
+    saveDocumentAs(document, path);
+}
+
 void DocumentsManager::saveAllDocuments() {
-    for( DocumentTab *document : m_documents)
-        if (document->isModified())
+    for(DocumentTab *document : std::as_const(m_documents)) {
+        if (!document->isModified())
+            continue;
+
+        const bool needsSaveAs =
+            document->title() != document->newTitle() ||
+            document->filePath().isNull();
+
+        if (needsSaveAs) {
+            saveDocumentAs(document, nullptr);
+        } else {
             saveDocument(document);
+        }
+    }
 }
 
 void DocumentsManager::closeDocument(int index) {

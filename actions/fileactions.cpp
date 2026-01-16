@@ -121,7 +121,7 @@ void FileActions::onSaveAsFileTriggered() {
                     tr("Save As..."),
                     initial,
                     "Algorithm Files (*.vib)");
-    emit saveAsFileRequested();
+    emit saveAsFileRequested(fileUrl.toString());
 }
 
 void FileActions::onSaveAllFilesTriggered() {

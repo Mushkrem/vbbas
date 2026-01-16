@@ -15,9 +15,11 @@ public:
     QGraphicsView *view() const { return m_view; }
     QString title() const { return m_title; }
     QString newTitle() const { return m_newTitle; }
+    QString filePath() const { return m_filePath; }
 
     void save();
     void setTitle(const QString &title);
+    void setFilePath(const QString &path);
     void initialize();
 
     void setFileActions(QList<QAction*> actions);
@@ -32,6 +34,7 @@ signals:
 private:
     QString m_newTitle = "Untitled";
     QString m_title = "Untitled";
+    QString m_filePath;
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
 
