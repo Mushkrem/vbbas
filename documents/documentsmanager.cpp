@@ -2,13 +2,16 @@
 #include "fileservice.h"
 
 #include <QMenu>
+#include <QStyle>
 #include <QLabel>
 #include <QTabBar>
 #include <QFileInfo>
+#include <QPushButton>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QAbstractButton>
 #include <QRegularExpression>
 
 namespace {
@@ -174,14 +177,13 @@ void DocumentsManager::renameDocument(int index) {
                 illegalChars << it.next().captured(0);
             }
             illegalChars.removeDuplicates();
-
-            QMessageBox::critical(
-                m_tabWidget,
-                tr("Invalid Name"),
-                tr("Your input contains invalid characters.\n"
-                   "File names cannot contain the following characters: "
-                   "'%1'").arg(illegalChars.join(" "))
-            );
+            QMessageBox messageBox(m_tabWidget);
+            messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
+            messageBox.setWindowTitle("Invalid Name");
+            messageBox.setText(tr("Your input contains invalid characters. \n"
+                               "File names cannot containg the following characters: "
+                               "'%1'").arg(illegalChars.join(" ")));
+            messageBox.exec();
             return;
         }
         document->setTitle(newName);
@@ -264,6 +266,28 @@ void DocumentsManager::closeDocument(int index) {
     DocumentTab *document = qobject_cast<DocumentTab*>(m_tabWidget->widget(index));
     if(!document)
         return;
+
+    if (document->isModified()) {
+        QMessageBox messageBox(m_tabWidget);
+        messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(32, 32));
+        messageBox.setWindowTitle(tr("Unsaved Changes"));
+        messageBox.setText(tr("The document \"%1\" has been modified. \nDo you want to save your changes?")
+                               .arg(document->title()));
+
+        QPushButton *saveButton = messageBox.addButton(tr("Save"), QMessageBox::AcceptRole);
+        QPushButton *discardButton = messageBox.addButton(tr("Don't save"), QMessageBox::DestructiveRole);
+        QPushButton *cancelButton = messageBox.addButton(tr("Cancel"), QMessageBox::RejectRole);
+        Q_UNUSED(discardButton);
+
+        messageBox.exec();
+
+        QAbstractButton *clicked = messageBox.clickedButton();
+        if (clicked == saveButton) {
+            saveDocument(document);
+        } else if (clicked == cancelButton) {
+            return;
+        }
+    }
 
     m_documents.removeOne(document);
     m_tabWidget->removeTab(index);

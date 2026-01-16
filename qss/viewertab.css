@@ -71,3 +71,17 @@ QMenu::Item:selected {
 QMessageBox {
     qproperty-iconSize: 24px;
 }
+
+QInputDialog QPushButton:default, 
+QMessageBox QPushButton:default {
+    background-color: #5a9ff2;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 3px;
+    border: none;
+}
+
+QIputDialog QPushButton:default:hover,
+QMessageBox QPushButton:default:hover {
+    background-color: #4886f1;
+}
