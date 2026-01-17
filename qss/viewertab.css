@@ -68,10 +68,6 @@ QMenu::Item:selected {
     background-color: palette(highlight);
 }
 
-QMessageBox {
-    qproperty-iconSize: 24px;
-}
-
 QInputDialog QPushButton:default, 
 QMessageBox QPushButton:default {
     background-color: #5a9ff2;

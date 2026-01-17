@@ -8,7 +8,7 @@
 bool FileService::saveDocument(DocumentTab *document, const QString &filePath, QString &error) {
     if (!document) {
         error = "Invalid document.";
-        return EXIT_FAILURE;
+        return false;
     }
 
     // Serialize document to JSON
@@ -16,36 +16,36 @@ bool FileService::saveDocument(DocumentTab *document, const QString &filePath, Q
 
     // Write to file
     if (!writeJsonToFile(filePath, json, error))
-        return EXIT_FAILURE;
+        return false;
 
     QFileInfo fileInfo(filePath);
     document->setTitle(fileInfo.fileName());
 
     if (!error.isEmpty())
-        return EXIT_FAILURE;
+        return false;
 
-    return EXIT_SUCCESS;
+    return true;
 }
 
 bool FileService::loadDocument(DocumentTab *document, const QString &filePath, QString &error) {
     if (!document) {
         error = "Invalid document.";
-        return EXIT_FAILURE;
+        return false;
     }
 
     // Read JSON from file
     QJsonObject json;
     if (!readJsonFromFile(filePath, json, error))
-        return EXIT_FAILURE;
+        return false;
 
     // Deserialize JSON to document
     if (!DocumentSerializer::fromJson(document, json, error))
-        return EXIT_FAILURE;
+        return false;
 
     if (!error.isEmpty())
-        return EXIT_FAILURE;
+        return false;
 
-    return EXIT_SUCCESS;
+    return true;
 }
 
 bool FileService::isValidFile(DocumentTab *document, const QString &filePath) {
@@ -63,7 +63,7 @@ bool FileService::writeJsonToFile(const QString &filePath, const QJsonObject &js
     QFile file(filePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         error = "Could not open file for writing: " + file.errorString();
-        return EXIT_FAILURE;
+        return false;
     }
 
     QJsonDocument doc(json);
@@ -72,18 +72,18 @@ bool FileService::writeJsonToFile(const QString &filePath, const QJsonObject &js
     if (bytesWritten == -1) {
         error = "Failed to write to file: " + file.errorString();
         file.close();
-        return EXIT_FAILURE;
+        return false;
     }
 
     file.close();
-    return EXIT_SUCCESS;
+    return true;
 }
 
 bool FileService::readJsonFromFile(const QString &filePath, QJsonObject &json, QString &error) {
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         error = "Could not open file for reading: " + file.errorString();
-        return EXIT_FAILURE;
+        return false;
     }
 
     QByteArray data = file.readAll();
@@ -94,14 +94,14 @@ bool FileService::readJsonFromFile(const QString &filePath, QJsonObject &json, Q
 
     if (parseError.error != QJsonParseError::NoError) {
         error = "JSON parse error: " + parseError.errorString();
-        return EXIT_FAILURE;
+        return false;
     }
 
     if (!doc.isObject()) {
         error = "Invalid JSON structure.";
-        return EXIT_FAILURE;
+        return false;
     }
 
     json = doc.object();
-    return EXIT_SUCCESS;
+    return true;
 }

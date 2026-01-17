@@ -52,6 +52,7 @@ private:
     QHash<DocumentTab*, QLabel*> m_labels;
     int m_documentIndex;
 
+    int initializeNewDocument(DocumentTab &document);
     void drawDocumentBar(DocumentTab *document);
     void setupTabBarContextMenu();
     void showTabContextMenu(const QPoint &position);

@@ -124,7 +124,6 @@ void DocumentsManager::drawDocumentBar(DocumentTab *document) {
     if (document->isModified()) {
         title.append("*");
         label->setText(title);
-        // label->setStyleSheet("font-style: italic;");
     }
 
     layout->addWidget(iconLabel);
@@ -136,72 +135,61 @@ void DocumentsManager::drawDocumentBar(DocumentTab *document) {
 
 void DocumentsManager::createNewDocument() {
     auto *document = new DocumentTab;
-    m_documents.append(document);
-
-    int index = m_tabWidget->addTab(document, "");
-    changeCurrentDocument(index);
-    drawDocumentBar(document);
-
-    connect(document, &DocumentTab::modifiedChanged,
-            this, &DocumentsManager::documentModificationChanged);
-
-    document->initialize();
+    initializeNewDocument(*document);
 
     emit documentCreated(document);
 }
 
-void DocumentsManager::renameDocument(int index) {
-    DocumentTab *document = qobject_cast<DocumentTab*>(m_tabWidget->widget(index));
-    if (!document)
-        return;
-
-    QString currentName = document->newTitle();
-    bool changed = false;
-
-    QString newName = QInputDialog::getText(
-        m_tabWidget,
-        tr("Rename Document"),
-        tr("Enter new name:"),
-        QLineEdit::Normal,
-        currentName,
-        &changed
-    );
-
-    newName.replace(" ", ""); // Remove whitespaces
-
-    if (changed && !newName.isEmpty() && newName != currentName) {
-        if (!validNameRegex->match(newName).hasMatch()) {
-            QStringList illegalChars;
-            auto it = illegalCharsRegex->globalMatch(newName);
-            while (it.hasNext()) {
-                illegalChars << it.next().captured(0);
-            }
-            illegalChars.removeDuplicates();
-            QMessageBox messageBox(m_tabWidget);
-            messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
-            messageBox.setWindowTitle("Invalid Name");
-            messageBox.setText(tr("Your input contains invalid characters. \n"
-                               "File names cannot containg the following characters: "
-                               "'%1'").arg(illegalChars.join(" ")));
-            messageBox.exec();
+void DocumentsManager::openDocument(const QString &path) {
+    // Check if document is already opened
+    for (DocumentTab *document : std::as_const(m_documents)) {
+        if (document->filePath() == path) {
+            int index = documentIndexOf(document);
+            changeCurrentDocument(index);
             return;
         }
-        document->setTitle(newName);
-        drawDocumentBar(document);
     }
+    auto *document = new DocumentTab;
+    QString error;
+    if (!FileService::loadDocument(document, path, error)) {
+        QMessageBox messageBox(m_tabWidget);
+        messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
+        messageBox.setWindowTitle("Open Error");
+        messageBox.setText(tr("Failed to open document:\n"
+                              "'%1'").arg(error));
+        messageBox.exec();
+        delete document;
+        return;
+    }
+
+    document->setFilePath(path);
+    initializeNewDocument(*document);
+
+    emit documentCreated(document);
 }
 
-void DocumentsManager::openDocument(const QString &path) {
-    auto *document = new DocumentTab;
-    document->setTitle(QFileInfo(path).fileName());
+int DocumentsManager::initializeNewDocument(DocumentTab &document) {
+    m_documents.append(&document);
+    int index = m_tabWidget->addTab(&document, "");
+    changeCurrentDocument(index);
 
-    // to do
-    // changeCurrentDocument(index);
+    connect(&document, &DocumentTab::modifiedChanged,
+            this, &DocumentsManager::documentModificationChanged);
 
-    emit documentOpened(document);
+    document.initialize();
+
+    drawDocumentBar(&document);
+
+    return index;
 }
 
 void DocumentsManager::saveDocument(DocumentTab *document) {
+    QString error;
+    QString filePath = document->filePath();
+    if (!FileService::saveDocument(document, filePath, error)) {
+        qDebug() << "Error while saving document: " << error;
+    }
+
     document->save();
     drawDocumentBar(document);
 }
@@ -214,7 +202,7 @@ void DocumentsManager::saveDocumentAs(DocumentTab *document, const QString &path
             tr("Save As..."),
             document->newTitle(),
             "Algorithm Files (*.vib)"
-        ).toString();
+        ).toLocalFile();
         if (filePath.isNull())
             return;
     }
@@ -272,7 +260,7 @@ void DocumentsManager::closeDocument(int index) {
         messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxWarning).pixmap(32, 32));
         messageBox.setWindowTitle(tr("Unsaved Changes"));
         messageBox.setText(tr("The document \"%1\" has been modified. \nDo you want to save your changes?")
-                               .arg(document->title()));
+                               .arg(document->newTitle()));
 
         QPushButton *saveButton = messageBox.addButton(tr("Save"), QMessageBox::AcceptRole);
         QPushButton *discardButton = messageBox.addButton(tr("Don't save"), QMessageBox::DestructiveRole);
@@ -296,6 +284,47 @@ void DocumentsManager::closeDocument(int index) {
         changeCurrentDocument(index - 1);
 
     emit documentClosed(document);
+}
+
+void DocumentsManager::renameDocument(int index) {
+    DocumentTab *document = qobject_cast<DocumentTab*>(m_tabWidget->widget(index));
+    if (!document)
+        return;
+
+    QString currentName = document->newTitle();
+    bool changed = false;
+
+    QString newName = QInputDialog::getText(
+        m_tabWidget,
+        tr("Rename Document"),
+        tr("Enter new name:"),
+        QLineEdit::Normal,
+        currentName,
+        &changed
+        );
+
+    newName.replace(" ", ""); // Remove whitespaces
+
+    if (changed && !newName.isEmpty() && newName != currentName) {
+        if (!validNameRegex->match(newName).hasMatch()) {
+            QStringList illegalChars;
+            auto it = illegalCharsRegex->globalMatch(newName);
+            while (it.hasNext()) {
+                illegalChars << it.next().captured(0);
+            }
+            illegalChars.removeDuplicates();
+            QMessageBox messageBox(m_tabWidget);
+            messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
+            messageBox.setWindowTitle("Invalid Name");
+            messageBox.setText(tr("Your input contains invalid characters. \n"
+                                  "File names cannot containg the following characters: "
+                                  "'%1'").arg(illegalChars.join(" ")));
+            messageBox.exec();
+            return;
+        }
+        document->setTitle(newName);
+        drawDocumentBar(document);
+    }
 }
 
 void DocumentsManager::closeDocument() {

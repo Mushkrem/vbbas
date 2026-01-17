@@ -100,7 +100,11 @@ void FileActions::onNewFileTriggered() {
 }
 
 void FileActions::onOpenFileTriggered() {
-    QString fileName = QFileDialog::getOpenFileName(m_parentWindow, tr("Open File"));
+    QString fileName = QFileDialog::getOpenFileName(
+                        m_parentWindow,
+                        tr("Open File"),
+                        nullptr,
+                        "Algorithm Files (*.vib)");
     if (!fileName.isEmpty())
         emit openFileRequested(fileName);
 }
@@ -121,7 +125,7 @@ void FileActions::onSaveAsFileTriggered() {
                     tr("Save As..."),
                     initial,
                     "Algorithm Files (*.vib)");
-    emit saveAsFileRequested(fileUrl.toString());
+    emit saveAsFileRequested(fileUrl.toLocalFile());
 }
 
 void FileActions::onSaveAllFilesTriggered() {

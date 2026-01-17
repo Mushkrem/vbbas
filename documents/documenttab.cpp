@@ -33,7 +33,7 @@ DocumentTab::DocumentTab(QWidget *parent)
 
     m_scene = new QGraphicsScene(this);
     m_view = new QGraphicsView(m_scene, this);
-    m_modified = true;
+    // m_modified = true;
 
     layout->addWidget(m_view);
 }
@@ -79,7 +79,7 @@ void DocumentTab::setTitle(const QString &title) {
 
 void DocumentTab::initialize()
 {
-
+    m_modified = m_filePath.isNull();
     emit modifiedChanged(m_modified);
 }
 

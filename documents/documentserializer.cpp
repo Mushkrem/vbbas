@@ -11,7 +11,7 @@ QJsonObject DocumentSerializer::toJson(const DocumentTab *document) {
     QJsonObject canvas;
     canvas["gridSize"] = 20;
     canvas["showGrid"] = true;
-    canvas["backgroundColor"] = "#fff";
+    canvas["backgroundColor"] = "#FFFFFF";
     json["canvas"] = canvas;
 
     json["blocks"] = serializeBlocks(document);
@@ -65,35 +65,35 @@ bool DocumentSerializer::fromJson(DocumentTab *document, const QJsonObject &json
         error = "Failed to load variables. Step (4/4)";
 
     if (error != "")
-        return EXIT_FAILURE;
+        return false;
 
-    return EXIT_SUCCESS;
+    return true;
 }
 
 bool DocumentSerializer::deserializeMetadata(DocumentTab *document, const QJsonObject &json) {
     QString title = json["title"].toString();
     if (title.isEmpty())
-        EXIT_FAILURE;
+        return false;
     document->setTitle(title);
 
-    return EXIT_SUCCESS;
+    return true;
 }
 bool DocumentSerializer::deserializeBlocks(DocumentTab *document, const QJsonArray &blocks) {
     Q_UNUSED(document);
     Q_UNUSED(blocks);
 
-    return EXIT_SUCCESS;
+    return true;
 }
 bool DocumentSerializer::deserializeVariables(DocumentTab *document, const QJsonArray &variables) {
     Q_UNUSED(document);
     Q_UNUSED(variables);
 
-    return EXIT_SUCCESS;
+    return true;
 }
 bool DocumentSerializer::deserializeConnections(DocumentTab *document, const QJsonArray &connections) {
     Q_UNUSED(document);
     Q_UNUSED(connections);
 
-    return EXIT_SUCCESS;
+    return true;
 }
 
