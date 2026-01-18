@@ -93,6 +93,8 @@ void MainWindow::connectActions() {
     connect(actionsManager->file, &FileActions::saveAllFilesRequested,
             documentsManager, &DocumentsManager::saveAllDocuments);
     connect(actionsManager->file, &FileActions::saveAsFileRequested,
+            documentsManager, &DocumentsManager::saveDocumentAs);
+    connect(actionsManager->file, &FileActions::saveCurrentAsFileRequested,
             documentsManager, &DocumentsManager::saveCurrentDocumentAs);
     connect(actionsManager->file, &FileActions::closeFileRequested,
             documentsManager, static_cast<void (DocumentsManager::*)()>(&DocumentsManager::closeDocument));
@@ -120,6 +122,10 @@ void MainWindow::connectActions() {
                     actionsManager->object->interactionObjectAction,
                 });
             });
+
+    // document -> file actions
+    connect(documentsManager, &DocumentsManager::saveAsRequested,
+            actionsManager->file, &FileActions::onSaveAsFileTriggered);
 
     // document change → action states
     connect(documentsManager, &DocumentsManager::documentChanged,

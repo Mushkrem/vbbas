@@ -15,8 +15,8 @@
 #include <QRegularExpression>
 
 namespace {
-    Q_GLOBAL_STATIC(QRegularExpression, validNameRegex, ("^[A-Za-z0-9_]+$"))
-    Q_GLOBAL_STATIC(QRegularExpression, illegalCharsRegex, ("[^A-Za-z0-9_]"))
+    Q_GLOBAL_STATIC(QRegularExpression, validNameRegex, ("^[A-Za-z0-9_.]+$"))
+    Q_GLOBAL_STATIC(QRegularExpression, illegalCharsRegex, ("[^A-Za-z0-9_.]"))
 }
 
 DocumentsManager::DocumentsManager(QTabWidget *tabWidget, QObject *parent)
@@ -34,7 +34,7 @@ void DocumentsManager::changeCurrentDocument(int index) {
 // IDocument
 QString DocumentsManager::currentDocumentName() const {
     DocumentTab *doc = currentDocument();
-    return doc ? doc->title() : QString();
+    return doc ? doc->newTitle() : QString();
 }
 
 void DocumentsManager::setupTabBarContextMenu() {
@@ -106,6 +106,9 @@ void DocumentsManager::drawDocumentBar(DocumentTab *document) {
     wrapper->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     wrapper->setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    if (!document->filePath().isEmpty())
+        wrapper->setToolTip(document->filePath());
+
     auto *layout = new QHBoxLayout(wrapper);
     layout->setContentsMargins(6, 0, 3, 0);
     layout->setSpacing(6);
@@ -135,7 +138,7 @@ void DocumentsManager::drawDocumentBar(DocumentTab *document) {
 
 void DocumentsManager::createNewDocument() {
     auto *document = new DocumentTab;
-    initializeNewDocument(*document);
+    initializeNewDocument(document);
 
     emit documentCreated(document);
 }
@@ -154,7 +157,7 @@ void DocumentsManager::openDocument(const QString &path) {
     if (!FileService::loadDocument(document, path, error)) {
         QMessageBox messageBox(m_tabWidget);
         messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
-        messageBox.setWindowTitle("Open Error");
+        messageBox.setWindowTitle(tr("Open Error"));
         messageBox.setText(tr("Failed to open document:\n"
                               "'%1'").arg(error));
         messageBox.exec();
@@ -163,90 +166,109 @@ void DocumentsManager::openDocument(const QString &path) {
     }
 
     document->setFilePath(path);
-    initializeNewDocument(*document);
+    initializeNewDocument(document);
 
     emit documentCreated(document);
 }
 
-int DocumentsManager::initializeNewDocument(DocumentTab &document) {
-    m_documents.append(&document);
-    int index = m_tabWidget->addTab(&document, "");
+int DocumentsManager::initializeNewDocument(DocumentTab *document) {
+    m_documents.append(document);
+    int index = m_tabWidget->addTab(document, "");
     changeCurrentDocument(index);
 
-    connect(&document, &DocumentTab::modifiedChanged,
+    connect(document, &DocumentTab::modifiedChanged,
             this, &DocumentsManager::documentModificationChanged);
 
-    document.initialize();
+    document->initialize();
 
-    drawDocumentBar(&document);
+    drawDocumentBar(document);
 
     return index;
 }
 
 void DocumentsManager::saveDocument(DocumentTab *document) {
+    if (!document) return;
+    if (document->filePath().isEmpty()) {
+        emit saveAsRequested(document);
+        return;
+    }
+
+    QFileInfo currentFileInfo(document->filePath());
+    QString currentFileName = currentFileInfo.fileName();
+    QString newTitle = document->newTitle();
+
+    if (!newTitle.endsWith("." + FileService::fileExtension()))
+        newTitle += "." + FileService::fileExtension();
+
+    if (currentFileName != newTitle) {
+        // Title changed - need to rename the file
+        QString newFilePath = QDir(currentFileInfo.absolutePath()).filePath(newTitle);
+
+        if (!QFile::rename(document->filePath(), newFilePath)) {
+            QMessageBox messageBox(m_tabWidget);
+            messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
+            messageBox.setWindowTitle(tr("Rename Failed"));
+            messageBox.setText(tr("Failed to rename file."
+                                  "\nSaving with original name."));
+            messageBox.exec();
+            return;
+        } else {
+            document->setFilePath(newFilePath);
+        }
+    }
+
     QString error;
-    QString filePath = document->filePath();
-    if (!FileService::saveDocument(document, filePath, error)) {
+    if (!FileService::saveDocument(document, document->filePath(), error)) {
         qDebug() << "Error while saving document: " << error;
     }
 
     document->save();
     drawDocumentBar(document);
 }
+void DocumentsManager::saveCurrentDocument() {
+    DocumentTab *document = currentDocument();
+    saveDocument(document);
+}
 
-void DocumentsManager::saveDocumentAs(DocumentTab *document, const QString &path) {
-    QString filePath = path;
-    if (filePath.isNull()) {
-        filePath = QFileDialog::getSaveFileUrl(
-            m_tabWidget,
-            tr("Save As..."),
-            document->newTitle(),
-            "Algorithm Files (*.vib)"
-        ).toLocalFile();
-        if (filePath.isNull())
-            return;
-    }
+void DocumentsManager::saveDocumentAs(DocumentTab *document, const QString &filePath) {
+    if (!document || filePath.isEmpty())
+        return;
 
     document->setFilePath(filePath);
     saveDocument(document);
 }
 
-void DocumentsManager::saveCurrentDocument() {
+void DocumentsManager::saveCurrentDocumentAs(const QString &filePath) {
     DocumentTab *document = currentDocument();
-    if(!document)
-        return;
-
-    // If file changed name or the path is null saveAs.
-    if(document->title() != document->newTitle() || document->filePath().isNull()) {
-        saveDocumentAs(document, nullptr);
-        return;
-    }
-
-    saveDocument(document);
-}
-
-void DocumentsManager::saveCurrentDocumentAs(const QString &path) {
-    DocumentTab *document = currentDocument();
-    if(!document)
-        return;
-
-    saveDocumentAs(document, path);
+    saveDocumentAs(document, filePath);
 }
 
 void DocumentsManager::saveAllDocuments() {
+    QList<DocumentTab*> documentsNeedingSaveAs;
     for(DocumentTab *document : std::as_const(m_documents)) {
         if (!document->isModified())
             continue;
 
-        const bool needsSaveAs =
-            document->title() != document->newTitle() ||
-            document->filePath().isNull();
-
-        if (needsSaveAs) {
-            saveDocumentAs(document, nullptr);
+        if (document->filePath().isEmpty()) {
+            documentsNeedingSaveAs.append(document);
         } else {
             saveDocument(document);
         }
+    }
+
+    if (!documentsNeedingSaveAs.isEmpty()) {
+        QStringList names;
+        for (auto *doc : documentsNeedingSaveAs) {
+            names << doc->newTitle();
+        }
+
+        QMessageBox messageBox(m_tabWidget);
+        messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxInformation).pixmap(32, 32));
+        messageBox.setWindowTitle(tr("Save All"));
+        messageBox.setText(tr("The following documents need file paths:\n%1\n"
+                              "\nPlease save them individually using Save As.")
+                               .arg(names.join("\n")));
+        messageBox.exec();
     }
 }
 
@@ -305,26 +327,50 @@ void DocumentsManager::renameDocument(int index) {
 
     newName.replace(" ", ""); // Remove whitespaces
 
-    if (changed && !newName.isEmpty() && newName != currentName) {
-        if (!validNameRegex->match(newName).hasMatch()) {
-            QStringList illegalChars;
-            auto it = illegalCharsRegex->globalMatch(newName);
-            while (it.hasNext()) {
-                illegalChars << it.next().captured(0);
-            }
-            illegalChars.removeDuplicates();
+    if (!changed || newName.isEmpty() || newName == currentName) {
+        return;
+    }
+
+    if (!validNameRegex->match(newName).hasMatch()) {
+        QStringList illegalChars;
+        auto it = illegalCharsRegex->globalMatch(newName);
+        while (it.hasNext()) {
+            illegalChars << it.next().captured(0);
+        }
+        illegalChars.removeDuplicates();
+        QMessageBox messageBox(m_tabWidget);
+        messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
+        messageBox.setWindowTitle(tr("Invalid Name"));
+        messageBox.setText(tr("Your input contains invalid characters. \n"
+                              "File names cannot contain the following characters: "
+                              "'%1'").arg(illegalChars.join(" ")));
+        messageBox.exec();
+        return;
+    }
+
+    // there is a bug.
+    QString extensionWithDot = "." + FileService::fileExtension();
+    if (!newName.endsWith(extensionWithDot, Qt::CaseInsensitive))
+        newName = newName.left(newName.length() - extensionWithDot.length());
+    newName += extensionWithDot;
+
+    if (!document->filePath().isEmpty()) {
+        QFileInfo fileInfo(document->filePath());
+        QString newFilePath = QDir(fileInfo.absolutePath()).filePath(newName);
+        QFile file(newFilePath);
+        if (file.exists()) {
             QMessageBox messageBox(m_tabWidget);
             messageBox.setIconPixmap(messageBox.style()->standardIcon(QStyle::SP_MessageBoxCritical).pixmap(32, 32));
-            messageBox.setWindowTitle("Invalid Name");
-            messageBox.setText(tr("Your input contains invalid characters. \n"
-                                  "File names cannot containg the following characters: "
-                                  "'%1'").arg(illegalChars.join(" ")));
+            messageBox.setWindowTitle(tr("Invalid Name"));
+            messageBox.setText(tr("File by the name you have specified already exists.\n"
+                                  "Please choose a different name."));
             messageBox.exec();
             return;
         }
-        document->setTitle(newName);
-        drawDocumentBar(document);
     }
+
+    document->setTitle(newName);
+    drawDocumentBar(document);
 }
 
 void DocumentsManager::closeDocument() {

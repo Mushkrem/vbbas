@@ -44,28 +44,35 @@ QJsonArray DocumentSerializer::serializeConnections(const DocumentTab *document)
 }
 
 bool DocumentSerializer::fromJson(DocumentTab *document, const QJsonObject &json, QString &error) {
-    if (json["fileFormat"].toString() != "vibas-algorithm")
+    if (json["fileFormat"].toString() != "vibas-algorithm") {
         error = "Invalid file format";
+        return false;
+    }
 
     QString version = json["version"].toString();
     if (version != currentVersion()) {
         // messagebox
     }
 
-    if (!deserializeMetadata(document, json["metadata"].toObject()))
+    if (!deserializeMetadata(document, json["metadata"].toObject()) && error.isEmpty()) {
         error = "Failed to load metadata of the file. Step (1/4)";
-
-    if (!deserializeBlocks(document, json["blocks"].toArray()))
-        error = "Failed to load blocks. Step (2/4)";
-
-    if (!deserializeConnections(document, json["connections"].toArray()))
-        error = "Failed to load connections. Step (3/4)";
-
-    if (!deserializeVariables(document, json["variables"].toArray()))
-        error = "Failed to load variables. Step (4/4)";
-
-    if (error != "")
         return false;
+    }
+
+    if (!deserializeBlocks(document, json["blocks"].toArray()) && error.isEmpty()) {
+        error = "Failed to load blocks. Step (2/4)";
+        return false;
+    }
+
+    if (!deserializeConnections(document, json["connections"].toArray()) && error.isEmpty()) {
+        error = "Failed to load connections. Step (3/4)";
+        return false;
+    }
+
+    if (!deserializeVariables(document, json["variables"].toArray()) && error.isEmpty()) {
+        error = "Failed to load variables. Step (4/4)";
+        return false;
+    }
 
     return true;
 }

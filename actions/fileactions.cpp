@@ -1,4 +1,5 @@
 #include "fileactions.h"
+#include "../documents/fileservice.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -33,7 +34,7 @@ FileActions::FileActions(QWidget *parentWindow, QObject *parent)
     // Save As
     saveAsFileAction = new QAction(tr("&Save As..."), this);
         saveAsFileAction->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DocumentSaveAs));
-        connect(saveAsFileAction, &QAction::triggered, this, &FileActions::onSaveAsFileTriggered);
+        connect(saveAsFileAction, &QAction::triggered, this, &FileActions::onCurrentSaveAsFileTriggered);
 
     // Save All
     saveAllFilesAction = new QAction(tr("&Save All"), this);
@@ -104,7 +105,7 @@ void FileActions::onOpenFileTriggered() {
                         m_parentWindow,
                         tr("Open File"),
                         nullptr,
-                        "Algorithm Files (*.vib)");
+                        FileService::fileFilter());
     if (!fileName.isEmpty())
         emit openFileRequested(fileName);
 }
@@ -114,22 +115,55 @@ void FileActions::onCloseFileTriggered() {
 }
 
 void FileActions::onSaveFileTriggered() {
-    qDebug() << "FileActions Save";
     emit saveFileRequested();
 }
 
-void FileActions::onSaveAsFileTriggered() {
-    QString initial = m_documentInfo->currentDocumentName();
-    QUrl fileUrl = QFileDialog::getSaveFileUrl(
+void FileActions::onSaveAsFileTriggered(DocumentTab *document) {
+    QString currentName = m_documentInfo->currentDocumentName();
+    if (!currentName.endsWith("." + FileService::fileExtension(), Qt::CaseInsensitive))
+        currentName += "." + FileService::fileExtension();
+
+    QString filePath = QFileDialog::getSaveFileName(
                     m_parentWindow,
                     tr("Save As..."),
-                    initial,
-                    "Algorithm Files (*.vib)");
-    emit saveAsFileRequested(fileUrl.toLocalFile());
+                    currentName,
+                    FileService::fileFilter()
+    );
+
+    // User cancelled
+    if (filePath.isEmpty())
+        return;
+
+    if (!filePath.endsWith("." + FileService::fileExtension(), Qt::CaseInsensitive))
+        filePath += "." + FileService::fileExtension();
+
+    emit saveAsFileRequested(document, filePath);
+}
+
+void FileActions::onCurrentSaveAsFileTriggered() {
+    QString currentName = m_documentInfo->currentDocumentName();
+
+    if (!currentName.endsWith("." + FileService::fileExtension(), Qt::CaseInsensitive))
+        currentName += "." + FileService::fileExtension();
+
+    QString filePath = QFileDialog::getSaveFileName(
+        m_parentWindow,
+        tr("Save As..."),
+        currentName,
+        FileService::fileFilter()
+        );
+
+    // User cancelled
+    if (filePath.isEmpty())
+        return;
+
+    if (!filePath.endsWith("." + FileService::fileExtension(), Qt::CaseInsensitive))
+        filePath += "." + FileService::fileExtension();
+
+    emit saveCurrentAsFileRequested(filePath);
 }
 
 void FileActions::onSaveAllFilesTriggered() {
-    qDebug() << "FileActions SaveAll";
     emit saveAllFilesRequested();
 }
 

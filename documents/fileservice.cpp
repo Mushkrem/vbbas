@@ -21,9 +21,6 @@ bool FileService::saveDocument(DocumentTab *document, const QString &filePath, Q
     QFileInfo fileInfo(filePath);
     document->setTitle(fileInfo.fileName());
 
-    if (!error.isEmpty())
-        return false;
-
     return true;
 }
 
@@ -40,9 +37,6 @@ bool FileService::loadDocument(DocumentTab *document, const QString &filePath, Q
 
     // Deserialize JSON to document
     if (!DocumentSerializer::fromJson(document, json, error))
-        return false;
-
-    if (!error.isEmpty())
         return false;
 
     return true;

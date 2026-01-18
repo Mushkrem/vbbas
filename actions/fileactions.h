@@ -9,6 +9,7 @@
 #include <QMenu>
 
 class IDocumentInfo;
+class DocumentTab;
 
 class FileActions : public QObject
 {
@@ -37,18 +38,22 @@ signals:
     void openFileRequested(const QString &filePath);
     void closeFileRequested();
     void saveFileRequested();
-    void saveAsFileRequested(const QString &filePath);
+    void saveAsFileRequested(DocumentTab *document, const QString &filePath);
+    void saveCurrentAsFileRequested(const QString &filepath);
     void saveAllFilesRequested();
     void printFileRequested();
     void recentFilesRequested();
     void exitRequested();
+
+public slots:
+    void onSaveAsFileTriggered(DocumentTab *document);
 
 private slots:
     void onNewFileTriggered();
     void onOpenFileTriggered();
     void onCloseFileTriggered();
     void onSaveFileTriggered();
-    void onSaveAsFileTriggered();
+    void onCurrentSaveAsFileTriggered();
     void onSaveAllFilesTriggered();
     void onPrintFileTriggered();
     void onRecentFilesTriggered();

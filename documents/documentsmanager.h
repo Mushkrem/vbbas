@@ -28,13 +28,16 @@ public:
 public slots:
     void createNewDocument();
     void openDocument(const QString &path);
+
     void saveCurrentDocument();
     void saveCurrentDocumentAs(const QString &path);
     void saveDocument(DocumentTab *document);
     void saveDocumentAs(DocumentTab *document, const QString &path);
     void saveAllDocuments();
+
     void closeDocument();
     void closeDocument(int index);
+
     void renameDocument(int index);
     void changeCurrentDocument(int index);
     void onTabMoved(int to);
@@ -45,6 +48,7 @@ signals:
     void documentClosed(DocumentTab *document);
     void documentChanged(int index);
     void documentModificationChanged(bool modified);
+    void saveAsRequested(DocumentTab *document);
 
 private:
     QTabWidget *m_tabWidget;
@@ -52,7 +56,7 @@ private:
     QHash<DocumentTab*, QLabel*> m_labels;
     int m_documentIndex;
 
-    int initializeNewDocument(DocumentTab &document);
+    int initializeNewDocument(DocumentTab *document);
     void drawDocumentBar(DocumentTab *document);
     void setupTabBarContextMenu();
     void showTabContextMenu(const QPoint &position);

@@ -32,8 +32,8 @@ signals:
     void modifiedChanged(bool modified);
 
 private:
-    QString m_newTitle = "Untitled";
-    QString m_title = "Untitled";
+    QString m_newTitle = "untitled.vib";
+    QString m_title = "untitled.vib";
     QString m_filePath;
     QGraphicsScene *m_scene;
     QGraphicsView *m_view;
