@@ -15,8 +15,8 @@
 #include <QRegularExpression>
 
 namespace {
-    Q_GLOBAL_STATIC(QRegularExpression, validNameRegex, ("^[A-Za-z0-9_.]+$"))
-    Q_GLOBAL_STATIC(QRegularExpression, illegalCharsRegex, ("[^A-Za-z0-9_.]"))
+    Q_GLOBAL_STATIC(QRegularExpression, validNameRegex, ("^[A-Za-z0-9_]+$"))
+    Q_GLOBAL_STATIC(QRegularExpression, illegalCharsRegex, ("[^A-Za-z0-9_]"))
 }
 
 DocumentsManager::DocumentsManager(QTabWidget *tabWidget, QObject *parent)
@@ -314,6 +314,9 @@ void DocumentsManager::renameDocument(int index) {
         return;
 
     QString currentName = document->newTitle();
+    QString extensionWithDot = "." + FileService::fileExtension();
+    if (currentName.endsWith(FileService::fileExtension(), Qt::CaseInsensitive))
+        currentName = currentName.left(currentName.length() - extensionWithDot.length());
     bool changed = false;
 
     QString newName = QInputDialog::getText(
@@ -324,6 +327,8 @@ void DocumentsManager::renameDocument(int index) {
         currentName,
         &changed
         );
+
+    // .VIB DO NAZWY+
 
     newName.replace(" ", ""); // Remove whitespaces
 
@@ -347,12 +352,6 @@ void DocumentsManager::renameDocument(int index) {
         messageBox.exec();
         return;
     }
-
-    // there is a bug.
-    QString extensionWithDot = "." + FileService::fileExtension();
-    if (!newName.endsWith(extensionWithDot, Qt::CaseInsensitive))
-        newName = newName.left(newName.length() - extensionWithDot.length());
-    newName += extensionWithDot;
 
     if (!document->filePath().isEmpty()) {
         QFileInfo fileInfo(document->filePath());

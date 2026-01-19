@@ -126,6 +126,8 @@ void MainWindow::connectActions() {
     // document -> file actions
     connect(documentsManager, &DocumentsManager::saveAsRequested,
             actionsManager->file, &FileActions::onSaveAsFileTriggered);
+    connect(documentsManager, &DocumentsManager::documentClosed,
+            actionsManager->file, &FileActions::updateActionStates);
 
     // document change → action states
     connect(documentsManager, &DocumentsManager::documentChanged,
@@ -141,6 +143,15 @@ void MainWindow::connectActions() {
     QTabBar *tab = central->tabBar();
     connect(tab, &QTabBar::tabMoved,
             documentsManager, &DocumentsManager::onTabMoved);
+
+    // object creation
+    connect(actionsManager->object, &ObjectActions::objectRequested,
+            this, [this](ObjectActions::ObjectType type) {
+                DocumentTab *document = documentsManager->currentDocument();
+                if (document)
+                    document->onObjectRequested(type);
+            }
+    );
 }
 
 void MainWindow::setupUI() {

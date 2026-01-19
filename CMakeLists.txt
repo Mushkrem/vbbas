@@ -47,6 +47,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         actions/objectactions.h actions/objectactions.cpp
         documents/documentserializer.h documents/documentserializer.cpp
         documents/fileservice.h documents/fileservice.cpp
+        objects/objectbase.h objects/objectbase.cpp
+        objects/connectionpoint.h objects/connectionpoint.cpp
+        objects/connectionitem.h objects/connectionitem.cpp
+        objects/startblock.h objects/startblock.cpp
+        objects/objectfactory.h objects/objectfactory.cpp
+        documents/algorithmview.h documents/algorithmview.cpp
     )
 
 target_include_directories(vbbas PRIVATE
