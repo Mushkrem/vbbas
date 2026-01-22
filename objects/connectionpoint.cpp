@@ -11,8 +11,8 @@ ConnectionPoint::ConnectionPoint(Qt::Alignment position, ObjectBase *parent)
     , m_position(position)
     , m_parentBlock(parent)
 {
-    setBrush(Qt::blue);
-    setPen(QPen(Qt::darkBlue, 1));
+    setBrush(Qt::black);
+    setPen(QPen(Qt::white, 1));
     setZValue(10);
     setAcceptHoverEvents(true);
 
@@ -57,7 +57,7 @@ void ConnectionPoint::removeConnection(ConnectionItem *connection)
 void ConnectionPoint::updateConnections()
 {
     updatePosition();
-    for (ConnectionItem *connection : m_connections) {
+    for (ConnectionItem *connection : std::as_const(m_connections)) {
         connection->updatePath();
     }
 }
@@ -75,10 +75,13 @@ void ConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 void ConnectionPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << event->lastPos();
+    m_parentBlock->setLabel("Hello!");
     event->accept();
 }
 
 void ConnectionPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    qDebug() << event->lastPos();
     event->accept();
 }

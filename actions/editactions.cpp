@@ -147,8 +147,7 @@ void EditActions::onPropertiesTriggered() {
     emit propertiesRequested();
 }
 
-void EditActions::updateActionStates()
-{
+void EditActions::updateActionStates() {
     if (!m_documentInfo) return;
 
     bool hasAnythingSelected = m_documentInfo->hasAnythingSelected();

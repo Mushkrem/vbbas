@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include <QToolBar>
 #include <QWidget>
+#include <QJsonArray>
 
 class DocumentTab : public QWidget {
     Q_OBJECT
@@ -29,6 +30,7 @@ public:
     void setObjectActions(QList<QAction*> actions);
 
     bool isModified() const { return m_modified; };
+    bool isAnythingSelected() const { return m_selected; };
 
     QList<ObjectBase*> blocks() const { return m_blocks; }
     QList<ConnectionItem*> connections() const { return m_connections; }
@@ -41,8 +43,11 @@ public:
 
 public slots:
     void onObjectRequested(ObjectActions::ObjectType type);
+    void onSceneSelectionChanged();
 
 signals:
+    void clipboardChanged(QJsonArray contents);
+    void selectionChanged(int count);
     void modifiedChanged(bool modified);
 
 protected:
@@ -57,6 +62,12 @@ private:
 
     QToolBar *m_toolsToolBar;
     QToolBar *m_editToolBar;
+    QToolBar *m_objectToolBar;
+
+    void cancelPlacement();
+    void placeBlockAt(const QPoint &pos);
+
+    void copySelected();
 
     QList<ObjectBase*> m_blocks;
     QList<ConnectionItem*> m_connections;
@@ -64,7 +75,10 @@ private:
     ObjectActions::ObjectType m_blockTypeToPlace;
     ObjectBase *m_previewBlock = nullptr;
 
+    QJsonArray m_clipboard;
+
     bool m_modified;
+    int m_selected;
 };
 
 #endif // DOCUMENTTAB_H

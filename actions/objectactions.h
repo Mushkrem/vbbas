@@ -41,7 +41,8 @@ private slots:
     void onObjectTriggered();
 
 private:
-    QAction *createObjectAction(const QString &text, ObjectType type);
+    QIcon renderSvgIcon(const QString &path, QSize size);
+    QAction *createObjectAction(const QString &text, ObjectType type, const QIcon &icon);
     QWidget *m_parentWindow;
 };
 

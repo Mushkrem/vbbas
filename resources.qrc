@@ -8,13 +8,13 @@
     </qresource>
     <qresource prefix="/icons">
         <file>light/index.theme</file>
-        <file>light/actions/24/left_pane.svg</file>
-        <file>light/actions/24/right_pane.png</file>
         <file>dark/index.theme</file>
-        <file>dark/actions/24/left_pane.svg</file>
-        <file>dark/actions/24/right_pane.svg</file>
-        <file>dark/actions/64/left_pane.svg</file>
-        <file>dark/actions/64/right_pane.svg</file>
+        <file>light/conditional.svg</file>
+        <file>light/event.svg</file>
+        <file>light/interaction.svg</file>
+        <file>light/start.svg</file>
+        <file>light/statement.svg</file>
+        <file>light/stop.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>logo/logo.svg</file>

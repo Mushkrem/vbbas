@@ -81,7 +81,7 @@ void ObjectBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setRenderHint(QPainter::Antialiasing);
 
     if (isSelected()) {
-        painter->setPen(QPen(Qt::blue, 2, Qt::DashLine));
+        painter->setPen(QPen(Qt::black, 1, Qt::DashLine));
         painter->setBrush(Qt::NoBrush);
         painter->drawPath(shape());
     }
@@ -89,7 +89,8 @@ void ObjectBase::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     paintBlock(painter);
 
     painter->setPen(Qt::black);
-    painter->setFont(QFont("Arial", 10));
+    QFont font = QFont("Cascadia Code", 12);
+    painter->setFont(font);
     painter->drawText(boundingRect(), Qt::AlignCenter, m_label);
 }
 

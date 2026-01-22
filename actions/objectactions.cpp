@@ -1,27 +1,40 @@
 #include "objectactions.h"
 
-#include <QMetaEnum>
+#include <QPainter>
+#include <QSvgRenderer>
 
-QAction* ObjectActions::createObjectAction(const QString &text, ObjectType type) {
+QAction* ObjectActions::createObjectAction(const QString &text, ObjectType type, const QIcon &icon) {
     QAction *action = new QAction(text, this);
     action->setData(QVariant::fromValue(type));
-    action->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::DialogError));
+    action->setIcon(icon);
     connect(action, &QAction::triggered, this, &ObjectActions::onObjectTriggered);
 
     return action;
+}
+
+QIcon ObjectActions::renderSvgIcon(const QString &path, QSize size) {
+    QSvgRenderer renderer(path);
+    QPixmap pixmap(size);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::LosslessImageRendering);
+    renderer.render(&painter);
+
+    return QIcon(pixmap);
 }
 
 ObjectActions::ObjectActions(QWidget *parentWindow, QObject *parent)
     : QObject{parent}, m_parentWindow(parentWindow)
 {
 
-    startObjectAction = createObjectAction(tr("&Start block"), ObjectType::Start);
-    stopObjectAction = createObjectAction(tr("&Stop block"), ObjectType::Stop);
-    eventObjectAction = createObjectAction(tr("&Event block"), ObjectType::Event);
+    startObjectAction = createObjectAction(tr("&Start block"), ObjectType::Start, renderSvgIcon(":/icons/light/start.svg", QSize(32, 32)));
+    stopObjectAction = createObjectAction(tr("&Stop block"), ObjectType::Stop, renderSvgIcon(":/icons/light/stop.svg", QSize(32, 32)));
+    eventObjectAction = createObjectAction(tr("&Event block"), ObjectType::Event, renderSvgIcon(":/icons/light/event.svg", QSize(32, 32)));
 
-    statementObjectAction = createObjectAction(tr("&Statement block"), ObjectType::Statement);
-    conditionalObjectAction = createObjectAction(tr("&Conditional block"), ObjectType::Conditional);
-    interactionObjectAction = createObjectAction(tr("&Interaction block"), ObjectType::Interaction);
+    statementObjectAction = createObjectAction(tr("&Statement block"), ObjectType::Statement, renderSvgIcon(":/icons/light/statement.svg", QSize(32, 32)));
+    conditionalObjectAction = createObjectAction(tr("&Conditional block"), ObjectType::Conditional, renderSvgIcon(":/icons/light/conditional.svg", QSize(32, 32)));
+    interactionObjectAction = createObjectAction(tr("&Interaction block"), ObjectType::Interaction, renderSvgIcon(":/icons/light/interaction.svg", QSize(32, 32)));
 }
 
 void ObjectActions::populateMenu(QMenu *menu) {
@@ -29,9 +42,8 @@ void ObjectActions::populateMenu(QMenu *menu) {
 }
 
 QToolBar* ObjectActions::createToolBar(QWidget *parent) {
-    QToolBar *toolbar = new QToolBar(tr("View Toolbar"), parent);
-    toolbar->setObjectName("viewtoolbar");
-    toolbar->setIconSize(QSize(16, 16));
+    QToolBar *toolbar = new QToolBar(tr("Object Toolbar"), parent);
+    toolbar->setObjectName("objecttoolbar");
     toolbar->setFloatable(false);
     toolbar->setMovable(true);
 
@@ -51,6 +63,5 @@ void ObjectActions::onObjectTriggered() {
     if (!action) return;
 
     ObjectType type = action->data().value<ObjectType>();
-    qDebug() << "Object selected:" << QMetaEnum::fromType<ObjectType>().valueToKey(static_cast<int>(type));
     emit objectRequested(type);
 }

@@ -48,6 +48,7 @@ signals:
     void documentClosed(DocumentTab *document);
     void documentChanged(int index);
     void documentModificationChanged(bool modified);
+    void documentSelectionChanged(int count);
     void saveAsRequested(DocumentTab *document);
 
 private:

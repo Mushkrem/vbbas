@@ -55,7 +55,7 @@ bool DocumentsManager::hasOpenDocuments() const {
 
 bool DocumentsManager::hasAnythingSelected() const {
     DocumentTab *doc = currentDocument();
-    return doc ? doc->isModified() : false;
+    return doc ? doc->isAnythingSelected() : false;
 }
 
 int DocumentsManager::documentCount() const {
@@ -178,6 +178,9 @@ int DocumentsManager::initializeNewDocument(DocumentTab *document) {
 
     connect(document, &DocumentTab::modifiedChanged,
             this, &DocumentsManager::documentModificationChanged);
+
+    connect(document, &DocumentTab::selectionChanged,
+            this, &DocumentsManager::documentSelectionChanged);
 
     document->initialize();
 

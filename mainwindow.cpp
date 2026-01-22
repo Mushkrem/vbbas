@@ -135,6 +135,12 @@ void MainWindow::connectActions() {
     connect(documentsManager, &DocumentsManager::documentModificationChanged,
             actionsManager->file, &FileActions::updateActionStates);
 
+    // document selection → action states
+    connect(documentsManager, &DocumentsManager::documentSelectionChanged,
+            actionsManager->edit, &EditActions::updateActionStates);
+    connect(documentsManager, &DocumentsManager::documentChanged,
+            actionsManager->edit, &EditActions::updateActionStates);
+
     // tabs → documents
     connect(central, &QTabWidget::tabCloseRequested,
             documentsManager, static_cast<void (DocumentsManager::*)(int)>(&DocumentsManager::closeDocument));
