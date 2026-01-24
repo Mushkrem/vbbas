@@ -50,6 +50,7 @@ signals:
     void documentModificationChanged(bool modified);
     void documentSelectionChanged(int count);
     void saveAsRequested(DocumentTab *document);
+    void clipboardChanged();
 
 private:
     QTabWidget *m_tabWidget;

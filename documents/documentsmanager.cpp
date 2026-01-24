@@ -182,6 +182,9 @@ int DocumentsManager::initializeNewDocument(DocumentTab *document) {
     connect(document, &DocumentTab::selectionChanged,
             this, &DocumentsManager::documentSelectionChanged);
 
+    connect(document, &DocumentTab::clipboardChanged,
+            this, &DocumentsManager::clipboardChanged);
+
     document->initialize();
 
     drawDocumentBar(document);

@@ -58,6 +58,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         objects/statementblock.h objects/statementblock.cpp
         objects/conditionalblock.h objects/conditionalblock.cpp
         objects/interactionblock.h objects/interactionblock.cpp
+        MimeTypes.h
     )
 
 target_include_directories(vbbas PRIVATE

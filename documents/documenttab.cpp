@@ -1,11 +1,15 @@
 #include "documenttab.h"
 
+#include "../MimeTypes.h"
+
 #include "../objects/objectfactory.h"
 #include "../objects/connectionitem.h"
 
 #include <QFileInfo>
+#include <QMimeData>
 #include <QMouseEvent>
 #include <QVBoxLayout>
+#include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 
 DocumentTab::DocumentTab(QWidget *parent)
@@ -209,20 +213,28 @@ void DocumentTab::placeBlockAt(const QPoint &pos) {
 }
 
 void DocumentTab::copySelected() {
-    m_clipboard = QJsonArray();
-
     auto items = m_scene->selectedItems();
     if (items.isEmpty())
         return;
+
+    QJsonArray clipboard_array;
 
     for (auto *item : std::as_const(items)) {
         auto *object = qgraphicsitem_cast<ObjectBase*>(item);
         if (!object)
             continue;
 
-        m_clipboard.append(object->toJson());
+        clipboard_array.append(object->toJson());
     }
 
+    QJsonDocument document(clipboard_array);
+    QByteArray data = document.toJson(QJsonDocument::Compact);
+
+    QMimeData *mime = new QMimeData();
+    mime->setData(MIME_VIBAS, data);
+
+    QApplication:: // ekkekekekek
+    // usun m_clipboard, uzywaj systemowgo - dodalem mime type. musze siku
     emit clipboardChanged(m_clipboard);
 }
 
