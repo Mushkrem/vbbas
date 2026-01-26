@@ -45,11 +45,14 @@ void ObjectBase::fromJson(const QJsonObject &json)
     m_code = json["code"].toString();
     m_color = QColor(json["color"].toString());
     setPos(json["x"].toDouble(), json["y"].toDouble());
+
+    updateSizeFromLabel();
 }
 
 void ObjectBase::setLabel(const QString &label)
 {
     m_label = label;
+    updateSizeFromLabel();
     update();
 }
 
@@ -111,6 +114,21 @@ QPainterPath ObjectBase::shape() const
     return blockShape();
 }
 
+void ObjectBase::updateSizeFromLabel()
+{
+    QFont font("Cascadia Code", 12);
+    QFontMetrics fm(font);
+
+    qreal textWidth = fm.horizontalAdvance(m_label);
+    qreal padding = 20;
+
+    qreal minWidth = textWidth + padding;
+
+    m_size.setWidth(std::max(m_size.width(), minWidth));
+
+    prepareGeometryChange();
+}
+
 void ObjectBase::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mousePressEvent(event);
@@ -118,7 +136,7 @@ void ObjectBase::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ObjectBase::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsItem::mouseMoveEvent(event);
+    QGraphicsItem::mouseMoveEvent(event); // as const
     for (ConnectionPoint *point : connectionPoints()) {
         point->updateConnections();
     }

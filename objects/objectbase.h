@@ -52,6 +52,8 @@ protected:
     virtual void paintBlock(QPainter *painter) = 0;
     virtual QPainterPath blockShape() const = 0;
 
+    void updateSizeFromLabel();
+
     void createConnectionPoint(ConnectionPoint **point, Qt::Alignment position);
 
     QString m_id;

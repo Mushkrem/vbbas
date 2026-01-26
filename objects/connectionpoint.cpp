@@ -67,10 +67,10 @@ void ConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->setBrush(brush());
-    painter->setPen(pen());
-    painter->drawEllipse(rect());
+    // painter->setRenderHint(QPainter::Antialiasing);
+    // painter->setBrush(brush());
+    // painter->setPen(pen());
+    // painter->drawEllipse(rect());
 }
 
 void ConnectionPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
