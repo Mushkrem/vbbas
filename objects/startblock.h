@@ -6,7 +6,7 @@
 class StartBlock : public ObjectBase
 {
 public:
-    explicit StartBlock(QGraphicsItem *parent = nullptr);
+    explicit StartBlock(QGraphicsObject *parent = nullptr);
 
     ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Start; }
 

@@ -3,7 +3,7 @@
 
 #include <QPainter>
 
-InteractionBlock::InteractionBlock(QGraphicsItem *parent)
+InteractionBlock::InteractionBlock(QGraphicsObject *parent)
     : ObjectBase(parent)
 {
     m_label = "...";

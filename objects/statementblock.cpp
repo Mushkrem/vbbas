@@ -3,7 +3,7 @@
 
 #include <QPainter>
 
-StatementBlock::StatementBlock(QGraphicsItem *parent)
+StatementBlock::StatementBlock(QGraphicsObject *parent)
     : ObjectBase(parent)
 {
     m_label = "...";

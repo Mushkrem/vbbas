@@ -7,6 +7,7 @@
 
 #include <QFileInfo>
 #include <QMimeData>
+#include <QClipboard>
 #include <QMouseEvent>
 #include <QVBoxLayout>
 #include <QApplication>
@@ -217,6 +218,8 @@ void DocumentTab::copySelected() {
     if (items.isEmpty())
         return;
 
+    qDebug() << "Copy!";
+
     QJsonArray clipboard_array;
 
     for (auto *item : std::as_const(items)) {
@@ -233,9 +236,8 @@ void DocumentTab::copySelected() {
     QMimeData *mime = new QMimeData();
     mime->setData(MIME_VIBAS, data);
 
-    QApplication:: // ekkekekekek
-    // usun m_clipboard, uzywaj systemowgo - dodalem mime type. musze siku
-    emit clipboardChanged(m_clipboard);
+    QApplication::clipboard()->setMimeData(mime);
+    emit clipboardChanged();
 }
 
 bool DocumentTab::eventFilter(QObject *watched, QEvent *event)

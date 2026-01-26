@@ -6,9 +6,9 @@
 class StatementBlock : public ObjectBase
 {
 public:
-    explicit StatementBlock(QGraphicsItem *parent = nullptr);
+    explicit StatementBlock(QGraphicsObject *parent = nullptr);
 
-    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Stop; }
+    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Statement; }
 
 protected:
     void paintBlock(QPainter *painter) override;

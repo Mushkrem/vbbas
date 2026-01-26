@@ -59,6 +59,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         objects/conditionalblock.h objects/conditionalblock.cpp
         objects/interactionblock.h objects/interactionblock.cpp
         MimeTypes.h
+        editor/codeeditor.h editor/codeeditor.cpp
+        editor/csyntaxhighlighter.h editor/csyntaxhighlighter.cpp
+        objects/objecttypes.h
     )
 
 target_include_directories(vbbas PRIVATE

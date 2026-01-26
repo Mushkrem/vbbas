@@ -3,7 +3,7 @@
 
 #include <QPainter>
 
-StopBlock::StopBlock(QGraphicsItem *parent)
+StopBlock::StopBlock(QGraphicsObject *parent)
     : ObjectBase(parent)
 {
     m_label = "STOP";

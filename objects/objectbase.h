@@ -3,17 +3,17 @@
 
 #include "../actions/objectactions.h"
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QList>
 #include <QUuid>
 
 class ConnectionPoint;
 class ConnectionItem;
 
-class ObjectBase : public QGraphicsItem
+class ObjectBase : public QGraphicsObject
 {
 public:
-    explicit ObjectBase(QGraphicsItem *parent = nullptr);
+    explicit ObjectBase(QGraphicsObject *parent = nullptr);
     virtual ~ObjectBase();
 
     QString id() const { return m_id; }
@@ -35,6 +35,9 @@ public:
     QColor color() const { return m_color; }
     void setColor(const QColor &color);
 
+    QString code() const { return m_code; }
+    void setCode(const QString &code);
+
 protected:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -52,9 +55,10 @@ protected:
     void createConnectionPoint(ConnectionPoint **point, Qt::Alignment position);
 
     QString m_id;
-    QString m_label;
-    QColor m_color;
     QSizeF m_size;
+    QString m_code = "{\n\t\n\t\n\t\n}";
+    QColor m_color;
+    QString m_label;
 
     ConnectionPoint *m_topConnection = nullptr;
     ConnectionPoint *m_rightConnection = nullptr;

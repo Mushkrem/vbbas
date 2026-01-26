@@ -1,14 +1,16 @@
 #include "objectbase.h"
 #include "connectionpoint.h"
+#include "../editor/codeeditor.h"
 
+#include <QUuid>
+#include <QDialog>
 #include <QPainter>
+#include <QJsonObject>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
-#include <QJsonObject>
-#include <QUuid>
 
-ObjectBase::ObjectBase(QGraphicsItem *parent)
-    : QGraphicsItem(parent)
+ObjectBase::ObjectBase(QGraphicsObject *parent)
+    : QGraphicsObject(parent)
     , m_id(QUuid::createUuid().toString(QUuid::WithoutBraces))
     , m_label("Block")
     , m_color(Qt::lightGray)
@@ -22,10 +24,14 @@ ObjectBase::~ObjectBase() {}
 
 QJsonObject ObjectBase::toJson() const
 {
+    qDebug() << "toJson: " << blockType();
+    qDebug() << "toJson: " << static_cast<int>(blockType());
+
     QJsonObject json;
     json["id"] = m_id;
     json["type"] = static_cast<int>(blockType());
     json["label"] = m_label;
+    json["code"] = m_code;
     json["color"] = m_color.name();
     json["x"] = pos().x();
     json["y"] = pos().y();
@@ -36,6 +42,7 @@ void ObjectBase::fromJson(const QJsonObject &json)
 {
     m_id = json["id"].toString();
     m_label = json["label"].toString();
+    m_code = json["code"].toString();
     m_color = QColor(json["color"].toString());
     setPos(json["x"].toDouble(), json["y"].toDouble());
 }
@@ -44,6 +51,11 @@ void ObjectBase::setLabel(const QString &label)
 {
     m_label = label;
     update();
+}
+
+void ObjectBase::setCode(const QString &code)
+{
+    m_code = code;
 }
 
 void ObjectBase::setColor(const QColor &color)
@@ -126,5 +138,18 @@ void ObjectBase::mouseRightClickEvent(QGraphicsSceneMouseEvent *event)
 void ObjectBase::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    // todo
+
+    CodeEditor *editor = new CodeEditor(nullptr, QString("'%1' Code Editor").arg(m_label));
+    editor->setAttribute(Qt::WA_DeleteOnClose);
+    editor->setWindowModality(Qt::NonModal);
+    editor->setCode(m_code);
+
+    CodeEditor::connect(editor, &QDialog::accepted,
+            this, [this, editor]() {
+                setCode(editor->code());
+            });
+
+    editor->show();
+    editor->raise();
+    editor->activateWindow();
 }

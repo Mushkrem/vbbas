@@ -3,7 +3,7 @@
 
 #include <QPainter>
 
-StartBlock::StartBlock(QGraphicsItem *parent)
+StartBlock::StartBlock(QGraphicsObject *parent)
     : ObjectBase(parent)
 {
     m_label = "START";

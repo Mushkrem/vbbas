@@ -8,12 +8,12 @@ namespace {
     constexpr float CornerOffset = 22.5f;
 }
 
-ConditionalBlock::ConditionalBlock(QGraphicsItem *parent)
+ConditionalBlock::ConditionalBlock(QGraphicsObject *parent)
     : ObjectBase(parent)
 {
     m_label = "...";
     m_color = QColor(255, 255, 255);
-    m_size = QSizeF(400, 120);
+    m_size = QSizeF(45, 45);
 
     createConnectionPoint(&m_topConnection, Qt::AlignTop);
     createConnectionPoint(&m_rightConnection, Qt::AlignRight);

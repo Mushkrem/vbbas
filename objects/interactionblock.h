@@ -6,9 +6,9 @@
 class InteractionBlock : public ObjectBase
 {
 public:
-    explicit InteractionBlock(QGraphicsItem *parent = nullptr);
+    explicit InteractionBlock(QGraphicsObject *parent = nullptr);
 
-    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Stop; }
+    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Interaction; }
 
 protected:
     void paintBlock(QPainter *painter) override;

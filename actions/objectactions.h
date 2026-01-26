@@ -6,10 +6,14 @@
 #include <QAction>
 #include <QMenu>
 
+#include "../objects/objecttypes.h"
+
 class ObjectActions : public QObject
 {
     Q_OBJECT
 public:
+    using ObjectType = ObjectTypes::BlockType;
+
     explicit ObjectActions(QWidget *parentWindow, QObject *parent = nullptr);
 
     QAction* startObjectAction;
@@ -22,17 +26,6 @@ public:
 
     void populateMenu(QMenu *menu);
     QToolBar* createToolBar(QWidget *parent);
-
-    //temporarily here
-    enum class ObjectType {
-        Start,
-        Stop,
-        Event,
-        Statement,
-        Conditional,
-        Interaction
-    };
-    Q_ENUM(ObjectType)
 
 signals:
     void objectRequested(ObjectType type);

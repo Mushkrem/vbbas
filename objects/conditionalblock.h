@@ -6,9 +6,9 @@
 class ConditionalBlock : public ObjectBase
 {
 public:
-    explicit ConditionalBlock(QGraphicsItem *parent = nullptr);
+    explicit ConditionalBlock(QGraphicsObject *parent = nullptr);
 
-    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Stop; }
+    ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Conditional; }
 
 protected:
     void paintBlock(QPainter *painter) override;

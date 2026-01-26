@@ -6,7 +6,7 @@
 class StopBlock : public ObjectBase
 {
 public:
-    explicit StopBlock(QGraphicsItem *parent = nullptr);
+    explicit StopBlock(QGraphicsObject *parent = nullptr);
 
     ObjectActions::ObjectType blockType() const override { return ObjectActions::ObjectType::Stop; }
 

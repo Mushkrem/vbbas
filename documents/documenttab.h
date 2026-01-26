@@ -46,7 +46,7 @@ public slots:
     void onSceneSelectionChanged();
 
 signals:
-    void clipboardChanged(QJsonArray contents);
+    void clipboardChanged();
     void selectionChanged(int count);
     void modifiedChanged(bool modified);
 

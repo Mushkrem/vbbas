@@ -15,6 +15,7 @@
         <file>light/start.svg</file>
         <file>light/statement.svg</file>
         <file>light/stop.svg</file>
+        <file>light/code.svg</file>
     </qresource>
     <qresource prefix="/img">
         <file>logo/logo.svg</file>
