@@ -157,7 +157,7 @@ void ObjectBase::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    CodeEditor *editor = new CodeEditor(nullptr, QString("'%1' Code Editor").arg(m_label));
+    CodeEditor *editor = new CodeEditor(nullptr, label());
     editor->setAttribute(Qt::WA_DeleteOnClose);
     editor->setWindowModality(Qt::NonModal);
     editor->setCode(m_code);
@@ -165,6 +165,7 @@ void ObjectBase::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     CodeEditor::connect(editor, &QDialog::accepted,
             this, [this, editor]() {
                 setCode(editor->code());
+                setLabel(editor->title());
             });
 
     editor->show();

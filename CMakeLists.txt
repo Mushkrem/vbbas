@@ -62,6 +62,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         editor/codeeditor.h editor/codeeditor.cpp
         editor/csyntaxhighlighter.h editor/csyntaxhighlighter.cpp
         objects/objecttypes.h
+        editor/titlebar.h editor/titlebar.cpp
     )
 
 target_include_directories(vbbas PRIVATE

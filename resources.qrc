@@ -5,6 +5,9 @@
         <file>qss/viewertab.css</file>
         <file>qss/MainWindow.css</file>
         <file>qss/tasksWidget.css</file>
+        <file>qss/codeeditor.css</file>
+        <file>fonts/CascadiaCode.ttf</file>
+        <file>fonts/CascadiaMono.ttf</file>
     </qresource>
     <qresource prefix="/icons">
         <file>light/index.theme</file>

@@ -1,0 +1,36 @@
+QLineEdit {
+    border: none;
+    background: transparent;
+    color: palette(Text);
+    padding: 5px;
+}
+
+QPlainTextEdit {
+    border: none;
+    background: transparent;
+    padding: 5px;
+}
+
+#titleWrapper {
+    background-color: palette(Mid);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#container {
+    background-color: palette(Window);
+    border: 1px solid palette(Mid);
+    border-radius: 5px;
+}
+
+QPushButton:default {
+    background-color: #5a9ff2;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 3px;
+    border: none;
+}
+
+QPushButton:default:hover {
+    background-color: #4886f1;
+}

@@ -114,7 +114,7 @@ void DocumentsManager::drawDocumentBar(DocumentTab *document) {
     layout->setSpacing(6);
     layout->setAlignment(Qt::AlignLeft);
 
-    QIcon icon = QIcon::fromTheme("format-justify-left");
+    QIcon icon = QIcon::fromTheme("document-new");
     auto *iconLabel = new QLabel;
     iconLabel->setPixmap(icon.pixmap(16, 16));
     iconLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
