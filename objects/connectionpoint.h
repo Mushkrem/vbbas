@@ -23,10 +23,16 @@ public:
 
     QPointF sceneConnectionPoint() const;
 
+    static ConnectionPoint* findNearestConnectionPoint(QGraphicsScene *scene, const QPointF &scenePos, ConnectionPoint *exclude, qreal maxDistance = 30.0);
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 private:
     void updatePosition();
@@ -34,6 +40,9 @@ private:
     Qt::Alignment m_position;
     ObjectBase *m_parentBlock;
     QList<ConnectionItem*> m_connections;
+
+    ConnectionItem *m_temporaryConnection = nullptr;
+    bool m_isHovered = false;
 };
 
 #endif // CONNECTIONPOINT_H

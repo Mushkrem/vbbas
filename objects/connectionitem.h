@@ -15,6 +15,9 @@ public:
     ConnectionPoint* startPoint() const { return m_startPoint; }
     ConnectionPoint* endPoint() const { return m_endPoint; }
 
+    void setEndPoint(ConnectionPoint *endPoint);
+    void setTemporaryEndPoint(const QPointF &scenePos);
+
     void updatePath();
 
     QJsonObject toJson() const;
@@ -24,8 +27,12 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
+    QPainterPath createPath(const QPointF &start, const QPointF &end) const;
+
     ConnectionPoint *m_startPoint;
     ConnectionPoint *m_endPoint;
+    QPointF m_temporaryEndPoint;
+    bool m_isTemporary = false;
 };
 
 #endif // CONNECTIONITEM_H

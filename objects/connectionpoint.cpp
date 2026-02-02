@@ -15,6 +15,7 @@ ConnectionPoint::ConnectionPoint(Qt::Alignment position, ObjectBase *parent)
     setPen(QPen(Qt::white, 1));
     setZValue(10);
     setAcceptHoverEvents(true);
+    setCursor(Qt::CrossCursor);
 
     updatePosition();
 }
@@ -73,15 +74,89 @@ void ConnectionPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     // painter->drawEllipse(rect());
 }
 
+ConnectionPoint* ConnectionPoint::findNearestConnectionPoint(QGraphicsScene *scene, const QPointF &scenePos, ConnectionPoint *exclude, qreal maxDistance)
+{
+    ConnectionPoint *nearest = nullptr;
+    qreal minDistance = maxDistance;
+
+    QList<QGraphicsItem*> items = scene->items();
+    for (QGraphicsItem *item : std::as_const(items)) {
+        ConnectionPoint *point = qgraphicsitem_cast<ConnectionPoint*>(item);
+        if (!point || point == exclude) {
+            continue;
+        }
+
+        if (exclude && point->parentBlock() == exclude->parentBlock()) {
+            continue;
+        }
+
+        qreal distance = QLineF(scenePos, point->sceneConnectionPoint()).length();
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearest = point;
+        }
+    }
+
+    return nearest;
+}
+
 void ConnectionPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << event->lastPos();
-    m_parentBlock->setLabel("Hello!");
-    event->accept();
+    if (event->button() == Qt::LeftButton) {
+        m_temporaryConnection = new ConnectionItem(this, nullptr);
+        scene()->addItem(m_temporaryConnection);
+
+        event->accept();
+    } else {
+        QGraphicsEllipseItem::mousePressEvent(event);
+    }
+}
+
+void ConnectionPoint::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (m_temporaryConnection) {
+        m_temporaryConnection->setTemporaryEndPoint(event->scenePos());
+        event->accept();
+    } else {
+        QGraphicsEllipseItem::mouseMoveEvent(event);
+    }
 }
 
 void ConnectionPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << event->lastPos();
-    event->accept();
+    if (event->button() == Qt::LeftButton && m_temporaryConnection) {
+        ConnectionPoint *targetPoint = findNearestConnectionPoint(
+            scene(),
+            event->scenePos(),
+            this,
+            30.0
+            );
+
+        if (targetPoint) {
+            m_temporaryConnection->setEndPoint(targetPoint);
+        } else {
+            scene()->removeItem(m_temporaryConnection);
+            delete m_temporaryConnection;
+            m_temporaryConnection = nullptr;
+        }
+
+        m_temporaryConnection = nullptr;
+        event->accept();
+    } else {
+        QGraphicsEllipseItem::mouseReleaseEvent(event);
+    }
+}
+
+void ConnectionPoint::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    m_isHovered = true;
+    update();
+}
+
+void ConnectionPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    m_isHovered = false;
+    update();
 }
